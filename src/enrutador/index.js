@@ -1,8 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Login from '../vistas/Login.vue'
 import Dashboard from '../vistas/Dashboard.vue'
+import { rutasMantenimiento } from './mantenimientoRutas'
+// Importa el nuevo componente para la ruta de mantenimiento
+import MantenimientoUsuarios from '../vistas/MantenimientoUsuarios.vue'
 
-const rutas = [
+const rutasPrincipales = [
   {
     path: '/',
     redirect: '/login'
@@ -18,8 +21,11 @@ const rutas = [
     name: 'Dashboard',
     component: Dashboard,
     meta: { requiereAutenticacion: true }
-  }
+  },
 ]
+
+// Rutas para mantenimiento de usuarios
+const rutas = [...rutasPrincipales, ...rutasMantenimiento]
 
 const router = createRouter({
   history: createWebHistory(),

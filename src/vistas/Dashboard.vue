@@ -122,6 +122,18 @@
           Acceder
         </button>
       </div>
+      <div class="module-card">
+        <div class="module-icon">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-6 0C7.79 11 6 9.21 6 7s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm-1.89 4.25c-2.31.84-4.22 2.23-5.56 3.65C2.12 19.34 2 20 2 20.73V22h12v-1.27c0-1.42-1.63-2.81-3.72-3.65A7.994 7.994 0 0 1 10.11 15.25zM16 13c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z"/>
+          </svg>
+        </div>
+        <h3>Mantentenimiento de Empleados</h3>
+        <p>Gestión de empleados</p>
+        <button class="module-btn" @click="navegarAModulo('mantenemientoEmpleados')">
+          Acceder
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -149,16 +161,20 @@ export default {
         console.error('Error al cargar estadísticas:', error)
       }
     }
-
+    // Navegar a un módulo mantenimiento de usuarios
     const navegarAModulo = (modulo) => {
-      // Por ahora, mostrar un mensaje de que el módulo está en desarrollo
-      alert(`Módulo ${modulo} en desarrollo`)
+      switch (modulo) {
+        case 'mantenimientoEmpleados':
+          router.push('/mantenimiento/usuarios')
+          break
+        default:
+          alert(`Módulo ${modulo} en desarrollo`)
+          break
+      }
     }
-
     onMounted(() => {
       cargarEstadisticas()
     })
-
     return {
       estadisticas,
       navegarAModulo
