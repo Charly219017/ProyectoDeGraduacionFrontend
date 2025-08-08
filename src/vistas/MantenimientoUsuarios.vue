@@ -155,14 +155,71 @@ onMounted(() => {
 .mantenimiento-usuarios-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 32px 16px;
   font-family: 'Inter', sans-serif;
+  background: #f6f8fc;
+  min-height: 100vh;
 }
 
 .mantenimiento-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 32px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.10), 0 1.5px 4px rgba(0,0,0,0.06);
+  padding: 24px 32px;
+}
+
+.mantenimiento-header h1 {
+  color: #333;
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.mantenimiento-header button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 28px;
+  font-size: 16px;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.07);
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+.mantenimiento-header button:hover {
+  background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.15);
+}
+
+hr {
+  margin: 48px 0 32px 0;
+  border: none;
+  border-top: 2px solid #e2e8f0;
+}
+
+@media (max-width: 900px) {
+  .mantenimiento-header {
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px 12px;
+    text-align: center;
+  }
+  .mantenimiento-header h1 {
+    font-size: 22px;
+  }
+  .mantenimiento-header button {
+    width: 100%;
+    font-size: 15px;
+    padding: 10px 0;
+  }
+  .mantenimiento-usuarios-container {
+    padding: 16px 4px;
+  }
 }
 </style>

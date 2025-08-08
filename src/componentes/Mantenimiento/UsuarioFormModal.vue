@@ -113,9 +113,9 @@ const handleSubmit = () => {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  width: 100vw;
+  height: 100vh;
+  background: rgba(102, 126, 234, 0.15);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -123,12 +123,26 @@ const handleSubmit = () => {
 }
 
 .modal-content {
-  background-color: white;
-  padding: 2rem;
-  border-radius: 0.75rem;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.10), 0 1.5px 4px rgba(0,0,0,0.06);
+  padding: 32px 24px;
   width: 100%;
   max-width: 500px;
-  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+  animation: modalIn 0.2s;
+}
+
+@keyframes modalIn {
+  from { transform: translateY(40px) scale(0.98); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+h2 {
+  color: #333;
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 24px;
+  text-align: center;
 }
 
 .form-group {
@@ -137,9 +151,28 @@ const handleSubmit = () => {
 
 .form-group label {
   display: block;
-  font-weight: 500;
+  font-weight: 600;
   margin-bottom: 0.5rem;
   color: #4b5563;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 15px;
+  color: #333;
+  background: #f9fafb;
+  transition: border 0.2s;
+  outline: none;
+}
+
+input:focus,
+select:focus {
+  border-color: #667eea;
+  background: #fff;
 }
 
 .form-actions {
@@ -148,13 +181,43 @@ const handleSubmit = () => {
   margin-top: 1.5rem;
 }
 
+.form-actions button {
+  border: none;
+  border-radius: 8px;
+  padding: 10px 24px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-left: 8px;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+.form-actions .bg-green-600 {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.form-actions .bg-green-600:hover {
+  background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+}
+
+.form-actions .bg-gray-400 {
+  background: #e2e8f0;
+  color: #333;
+}
+
+.form-actions .bg-gray-400:hover {
+  background: #cbd5e1;
+}
+
 .error-message {
-  background-color: #fef2f2;
+  background: #fef2f2;
   color: #ef4444;
   padding: 0.75rem;
   border-radius: 0.5rem;
   margin-bottom: 1rem;
   border: 1px solid #fca5a5;
   text-align: center;
+  font-weight: 500;
 }
 </style>

@@ -130,7 +130,7 @@
         </div>
         <h3>Mantentenimiento de Empleados</h3>
         <p>Gestión de empleados</p>
-        <button class="module-btn" @click="navegarAModulo('mantenemientoEmpleados')">
+        <button class="module-btn" @click="navegarAModulo('mantenimientoEmpleados')">
           Acceder
         </button>
       </div>
