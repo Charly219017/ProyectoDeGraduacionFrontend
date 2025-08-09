@@ -153,14 +153,19 @@ export default {
       activeEmployees: 0
     })
 
-    const cargarEstadisticas = async () => {
-      try {
-        const respuesta = await axios.get('/api/dashboard/estadisticas')
-        estadisticas.value = respuesta.data
-      } catch (error) {
-        console.error('Error al cargar estadísticas:', error)
+const cargarEstadisticas = async () => {
+  try {
+    const token = localStorage.getItem('token') // O donde guardes tu token
+    const respuesta = await axios.get('/api/dashboard/estadisticas', {
+      headers: {
+        Authorization: `Bearer ${token}`
       }
-    }
+    })
+    estadisticas.value = respuesta.data
+  } catch (error) {
+    console.error('Error al cargar estadísticas:', error)
+  }
+}
     // Navegar a un módulo mantenimiento de usuarios
     const navegarAModulo = (modulo) => {
       switch (modulo) {
