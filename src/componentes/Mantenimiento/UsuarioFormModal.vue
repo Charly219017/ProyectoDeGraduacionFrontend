@@ -1,3 +1,4 @@
+// carpeta frontend src/componentes/UsuarioFormModal.vue
 <template>
   <div v-if="mostrar" class="modal-overlay">
     <div class="modal-content">
@@ -45,7 +46,10 @@
             class="w-full px-3 py-2 border rounded-md"
           >
             <option :value="1">Administrador</option>
-            <option :value="2">Usuario</option>
+            <option :value="2">Supervisor</option>
+            <option :value="3">Digitador</option>
+            <option :value="4">Empleado</option>
+            <option :value="7">Externo</option>
           </select>
         </div>
         <div v-if="errorFormulario" class="error-message">

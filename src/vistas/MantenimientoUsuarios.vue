@@ -53,12 +53,8 @@ import {
   obtenerAuditoria
 } from '../servicios/mantenimiento.js';
 
-// Simulamos el store de autenticación (sin tocar tu src/almacen)
-const authStore = {
-  obtenerUsuario: {
-    id_usuario: 1 
-  }
-};
+// Importamos el store de autenticación real
+import { useAuthStore } from '../almacen/index.js';
 
 const usuarios = ref([]);
 const auditoria = ref([]);
@@ -66,6 +62,7 @@ const cargando = ref(true);
 const mostrarModal = ref(false);
 const modoFormulario = ref('crear');
 
+const authStore = useAuthStore();
 const formulario = ref({
   id_usuario: null,
   nombre_usuario: '',
@@ -117,7 +114,7 @@ const cerrarModal = () => {
 };
 
 const guardarUsuario = async (datosUsuario, modo) => {
-  const usuarioActualId = authStore.obtenerUsuario.id_usuario;
+  const usuarioActualId = authStore.usuario?.id_usuario;
   try {
     if (modo === 'crear') {
       await crearUsuario(datosUsuario, usuarioActualId);
@@ -134,7 +131,7 @@ const guardarUsuario = async (datosUsuario, modo) => {
 
 const eliminarUsuario = async (id) => {
   if (window.confirm('¿Estás seguro de que deseas eliminar a este usuario?')) {
-    const usuarioActualId = authStore.obtenerUsuario.id_usuario;
+    const usuarioActualId = authStore.usuario?.id_usuario;
     try {
       await eliminarUsuarioApi(id, usuarioActualId);
       await obtenerUsuarios();

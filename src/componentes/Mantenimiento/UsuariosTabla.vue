@@ -1,3 +1,4 @@
+// carpeta frontend src/componentes/UsuariosTabla.vue
 <template>
   <div class="usuarios-card">
     <h2 class="usuarios-title">Lista de Usuarios</h2>

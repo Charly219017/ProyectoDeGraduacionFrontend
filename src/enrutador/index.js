@@ -4,6 +4,7 @@ import Login from '../vistas/Login.vue'
 import Dashboard from '../vistas/Dashboard.vue'
 import { rutasMantenimiento } from './mantenimientoRutas'
 import MantenimientoUsuarios from '../vistas/MantenimientoUsuarios.vue'
+import empleadosRoutes from './empleados.js';
 
 // Importa tu servicio de autenticación
 import authService from '../servicios/auth'
@@ -27,8 +28,8 @@ const rutasPrincipales = [
   },
 ]
 
-// Rutas para mantenimiento de usuarios
-const rutas = [...rutasPrincipales, ...rutasMantenimiento]
+// Unimos todas las rutas en un solo array
+const rutas = [...rutasPrincipales, ...rutasMantenimiento, ...empleadosRoutes]
 
 const router = createRouter({
   history: createWebHistory(),

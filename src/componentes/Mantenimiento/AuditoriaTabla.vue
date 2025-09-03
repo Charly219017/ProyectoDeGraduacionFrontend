@@ -13,10 +13,10 @@
         </thead>
         <tbody>
           <tr v-for="(log, index) in auditoria" :key="index">
-            <td>{{ log.usuarioNombre }}</td>
+            <td>{{ obtenerUsuario(log) }}</td>
             <td>{{ log.accion }}</td>
             <td>{{ new Date(log.fecha).toLocaleString() }}</td>
-            <td>{{ log.descripcion }}</td>
+            <td>{{ obtenerDescripcion(log) }}</td>
           </tr>
         </tbody>
       </table>
@@ -30,12 +30,42 @@
 <script setup>
 import { defineProps } from 'vue';
 
-defineProps({
+const props = defineProps({
   auditoria: {
     type: Array,
     required: true,
   }
 });
+
+/**
+ * Función para parsear el campo de descripción y obtener el nombre del usuario
+ * que realizó la acción.
+ * @param {Object} log - El objeto de log de auditoría.
+ * @returns {string} El nombre del usuario o una cadena vacía si no se puede parsear.
+ */
+const obtenerUsuario = (log) => {
+  try {
+    const detalles = JSON.parse(log.descripcion);
+    return detalles.realizado_por?.nombre || `Usuario ID: ${log.usuario}`;
+  } catch (e) {
+    // Si la descripción no es un JSON, se usa la información del log directamente.
+    return `Usuario ID: ${log.usuario}`;
+  }
+};
+
+/**
+ * Función para parsear el campo de descripción y obtener el mensaje de log.
+ * @param {Object} log - El objeto de log de auditoría.
+ * @returns {string} El mensaje de log o la descripción original si no se puede parsear.
+ */
+const obtenerDescripcion = (log) => {
+  try {
+    const detalles = JSON.parse(log.descripcion);
+    return detalles.mensaje || log.descripcion;
+  } catch (e) {
+    return log.descripcion;
+  }
+};
 </script>
 
 <style scoped>
