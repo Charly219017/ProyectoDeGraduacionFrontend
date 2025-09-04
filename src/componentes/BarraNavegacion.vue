@@ -32,23 +32,6 @@
             <a href="#" class="dropdown-item">Evaluaciones</a>
           </div>
         </div>
-
-        <div class="nav-dropdown">
-          <button class="nav-link dropdown-toggle">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-              <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
-            </svg>
-            Reportes
-            <svg class="dropdown-arrow" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M7 10l5 5 5-5z"/>
-            </svg>
-          </button>
-          <div class="dropdown-menu">
-            <a href="#" class="dropdown-item">Estadísticas</a>
-            <a href="#" class="dropdown-item">Análisis</a>
-            <a href="#" class="dropdown-item">Exportar</a>
-          </div>
-        </div>
       </div>
 
       <div class="navbar-user">

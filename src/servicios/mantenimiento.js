@@ -50,9 +50,11 @@ export const obtenerAuditoria = async () => {
  * @param {Object} datosUsuario - El objeto con los datos del nuevo usuario.
  * @returns {Promise<Object>} Una promesa que se resuelve con el nuevo usuario creado.
  */
-export const crearUsuario = async (datosUsuario) => {
+export const crearUsuario = async (datosUsuario, auditorId) => {
   try {
-    const response = await axios.post(`${BASE_URL}/usuarios`, datosUsuario, {
+    // Incluimos el ID del auditor en el payload para el registro de auditoría en el backend.
+    const payload = { ...datosUsuario, auditor: auditorId };
+    const response = await axios.post(`${BASE_URL}/usuarios`, payload, {
       headers: getAuthHeader()
     });
     return response.data;
@@ -68,9 +70,11 @@ export const crearUsuario = async (datosUsuario) => {
  * @param {Object} datosActualizados - El objeto con los datos a modificar.
  * @returns {Promise<Object>} Una promesa que se resuelve con el usuario actualizado.
  */
-export const actualizarUsuario = async (id, datosActualizados) => {
+export const actualizarUsuario = async (id, datosActualizados, auditorId) => {
   try {
-    const response = await axios.put(`${BASE_URL}/usuarios/${id}`, datosActualizados, {
+    // Incluimos el ID del auditor en el payload.
+    const payload = { ...datosActualizados, auditor: auditorId };
+    const response = await axios.put(`${BASE_URL}/usuarios/${id}`, payload, {
       headers: getAuthHeader()
     });
     return response.data;
@@ -85,10 +89,13 @@ export const actualizarUsuario = async (id, datosActualizados) => {
  * @param {number} id - El ID del usuario a eliminar.
  * @returns {Promise<Object>} Una promesa que se resuelve con un mensaje de éxito.
  */
-export const eliminarUsuario = async (id) => {
+export const eliminarUsuario = async (id, auditorId) => {
   try {
+    // Para el borrado lógico, enviamos el ID del auditor en el cuerpo de la petición DELETE.
+    // El backend usará esto para marcar al usuario como inactivo y registrar la auditoría.
     const response = await axios.delete(`${BASE_URL}/usuarios/${id}`, {
-      headers: getAuthHeader()
+      headers: getAuthHeader(),
+      data: { auditor: auditorId }
     });
     return response.data;
   } catch (error) {

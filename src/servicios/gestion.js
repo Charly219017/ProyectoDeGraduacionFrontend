@@ -1,16 +1,19 @@
 // src/servicios/gestion.js
-
 import axios from 'axios';
-// Reemplaza 'http://api.jireh.com' con la URL base de tu backend real.
-const API_BASE_URL = 'http://api.jireh.com';
 
-/**
- * Obtiene todos los empleados del backend.
- * @returns {Promise<Array>} Un array de objetos de empleado.
- */
+const API_BASE_URL = '/api';
+
+function getAuthHeader() {
+  const token = localStorage.getItem('token');
+  return {
+    Authorization: `Bearer ${token}`
+  };
+}
+
+// --- Empleados ---
 export const obtenerTodosEmpleados = async () => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/empleados`);
+    const response = await axios.get(`${API_BASE_URL}/empleados`, { headers: getAuthHeader() });
     return response.data;
   } catch (error) {
     console.error('Error al obtener empleados:', error);
@@ -18,17 +21,20 @@ export const obtenerTodosEmpleados = async () => {
   }
 };
 
-/**
- * Crea un nuevo empleado en el backend.
- * Se envía el ID del usuario que realiza la acción para la auditoría.
- * @param {Object} datosEmpleado - Los datos del nuevo empleado.
- * @param {string|number} auditor - El ID del usuario que realiza la acción.
- * @returns {Promise<Object>} El empleado creado.
- */
+export const obtenerEmpleadoPorId = async (id) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/empleados/${id}`, { headers: getAuthHeader() });
+    return response.data;
+  } catch (error) {
+    console.error(`Error al obtener el empleado con ID ${id}:`, error);
+    throw error;
+  }
+};
+
 export const crearEmpleado = async (datosEmpleado, auditor) => {
   try {
-    const payload = { ...datosEmpleado, auditor }; // Agrega el auditor al payload
-    const response = await axios.post(`${API_BASE_URL}/empleados`, payload);
+    const payload = { ...datosEmpleado, auditor };
+    const response = await axios.post(`${API_BASE_URL}/empleados`, payload, { headers: getAuthHeader() });
     return response.data;
   } catch (error) {
     console.error('Error al crear empleado:', error);
@@ -36,18 +42,10 @@ export const crearEmpleado = async (datosEmpleado, auditor) => {
   }
 };
 
-/**
- * Actualiza un empleado existente por su ID.
- * Se envía el ID del usuario que realiza la acción para la auditoría.
- * @param {string|number} id - El ID del empleado a actualizar.
- * @param {Object} datosActualizados - Los datos actualizados del empleado.
- * @param {string|number} auditor - El ID del usuario que realiza la acción.
- * @returns {Promise<Object>} El empleado actualizado.
- */
 export const actualizarEmpleado = async (id, datosActualizados, auditor) => {
   try {
-    const payload = { ...datosActualizados, auditor }; // Agrega el auditor al payload
-    const response = await axios.put(`${API_BASE_URL}/empleados/${id}`, payload);
+    const payload = { ...datosActualizados, auditor };
+    const response = await axios.put(`${API_BASE_URL}/empleados/${id}`, payload, { headers: getAuthHeader() });
     return response.data;
   } catch (error) {
     console.error('Error al actualizar empleado:', error);
@@ -55,32 +53,22 @@ export const actualizarEmpleado = async (id, datosActualizados, auditor) => {
   }
 };
 
-/**
- * Elimina un empleado por su ID.
- * Se envía el ID del usuario que realiza la acción para la auditoría.
- * @param {string|number} id - El ID del empleado a eliminar.
- * @param {string|number} auditor - El ID del usuario que realiza la acción.
- * @returns {Promise<void>}
- */
 export const eliminarEmpleado = async (id, auditor) => {
   try {
-    // La información de auditoría se puede enviar en el cuerpo o como query param.
-    // Aquí la enviamos en el cuerpo de una petición PUT con un cambio de estado a "inactivo".
-    // Depende de la implementación de tu backend.
-    await axios.delete(`${API_BASE_URL}/empleados/${id}`, { data: { auditor } });
+    await axios.delete(`${API_BASE_URL}/empleados/${id}`, { 
+      headers: getAuthHeader(),
+      data: { auditor } 
+    });
   } catch (error) {
     console.error('Error al eliminar empleado:', error);
     throw error;
   }
 };
 
-/**
- * Obtiene la lista de todos los puestos disponibles.
- * @returns {Promise<Array>} Un array de objetos de puesto.
- */
+// --- Puestos ---
 export const obtenerPuestos = async () => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/puestos`);
+    const response = await axios.get(`${API_BASE_URL}/puestos`, { headers: getAuthHeader() });
     return response.data;
   } catch (error) {
     console.error('Error al obtener puestos:', error);
@@ -88,16 +76,158 @@ export const obtenerPuestos = async () => {
   }
 };
 
-/**
- * Obtiene la lista de todas las carreras disponibles.
- * @returns {Promise<Array>} Un array de objetos de carrera.
- */
+// --- Carreras ---
 export const obtenerCarreras = async () => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/carreras`);
+    const response = await axios.get(`${API_BASE_URL}/carreras`, { headers: getAuthHeader() });
     return response.data;
   } catch (error) {
     console.error('Error al obtener carreras:', error);
     throw error;
   }
+};
+
+// --- Dependencias ---
+export const obtenerDependencias = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/dependencias`, { headers: getAuthHeader() });
+    return response.data;
+  } catch (error) {
+    console.error('Error al obtener dependencias:', error);
+    throw error;
+  }
+};
+
+export const crearDependencia = async (datosDependencia, auditor) => {
+  try {
+    const payload = { ...datosDependencia, auditor };
+    const response = await axios.post(`${API_BASE_URL}/dependencias`, payload, { headers: getAuthHeader() });
+    return response.data;
+  } catch (error) {
+    console.error('Error al crear dependencia:', error);
+    throw error;
+  }
+};
+
+export const actualizarDependencia = async (id, datosActualizados, auditor) => {
+  try {
+    const payload = { ...datosActualizados, auditor };
+    const response = await axios.put(`${API_BASE_URL}/dependencias/${id}`, payload, { headers: getAuthHeader() });
+    return response.data;
+  } catch (error) {
+    console.error('Error al actualizar dependencia:', error);
+    throw error;
+  }
+};
+
+export const eliminarDependencia = async (id, auditor) => {
+  try {
+    await axios.delete(`${API_BASE_URL}/dependencias/${id}`, {
+      headers: getAuthHeader(),
+      data: { auditor }
+    });
+  } catch (error) {
+    console.error('Error al eliminar dependencia:', error);
+    throw error;
+  }
+};
+
+// --- Contratos ---
+export const obtenerContratos = async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/contratos`, { headers: getAuthHeader() });
+      return response.data;
+    } catch (error) {
+      console.error('Error al obtener contratos:', error);
+      throw error;
+    }
+  };
+
+export const obtenerContratosPorEmpleado = async (empleadoId) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/empleados/${empleadoId}/contratos`, { headers: getAuthHeader() });
+    return response.data;
+  } catch (error) {
+    console.error('Error al obtener contratos por empleado:', error);
+    throw error;
+  }
+};
+  
+export const crearContrato = async (datosContrato, auditor) => {
+  try {
+    const payload = { ...datosContrato, auditor };
+    const response = await axios.post(`${API_BASE_URL}/contratos`, payload, { headers: getAuthHeader() });
+    return response.data;
+  } catch (error) {
+    console.error('Error al crear contrato:', error);
+    throw error;
+  }
+};
+  
+export const actualizarContrato = async (id, datosActualizados, auditor) => {
+  try {
+    const payload = { ...datosActualizados, auditor };
+    const response = await axios.put(`${API_BASE_URL}/contratos/${id}`, payload, { headers: getAuthHeader() });
+    return response.data;
+  } catch (error) {
+    console.error('Error al actualizar contrato:', error);
+    throw error;
+  }
+};
+
+export const eliminarContrato = async (id, auditor) => {
+  try {
+    await axios.delete(`${API_BASE_URL}/contratos/${id}`, { 
+      headers: getAuthHeader(),
+      data: { auditor } 
+    });
+  } catch (error) {
+    console.error('Error al eliminar contrato:', error);
+    throw error;
+  }
+};
+
+// --- Bienestar ---
+export const obtenerActividadesBienestar = async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/bienestar`, { headers: getAuthHeader() });
+      return response.data;
+    } catch (error) {
+      console.error('Error al obtener actividades de bienestar:', error);
+      throw error;
+    }
+  };
+  
+  export const crearActividadBienestar = async (datosActividad, auditor) => {
+    try {
+      const payload = { ...datosActividad, auditor };
+      const response = await axios.post(`${API_BASE_URL}/bienestar`, payload, { headers: getAuthHeader() });
+      return response.data;
+    } catch (error) {
+      console.error('Error al crear actividad de bienestar:', error);
+      throw error;
+    }
+  };
+  
+  export const actualizarActividadBienestar = async (id, datosActualizados, auditor) => {
+    try {
+      const payload = { ...datosActualizados, auditor };
+      const response = await axios.put(`${API_BASE_URL}/bienestar/${id}`, payload, { headers: getAuthHeader() });
+      return response.data;
+    } catch (error) {
+      console.error('Error al actualizar actividad de bienestar:', error);
+      throw error;
+    }
+  };
+
+export const eliminarActividadBienestar = async (id, auditor) => {
+    try {
+        await axios.delete(`${API_BASE_URL}/bienestar/${id}`, {
+            headers: getAuthHeader(),
+            data: { auditor }
+        });
+    } catch (error) {
+        console.error('Error al eliminar actividad de bienestar:', error);
+        throw error;
+    }
 };

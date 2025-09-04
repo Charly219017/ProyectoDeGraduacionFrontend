@@ -170,7 +170,7 @@ const cargarEstadisticas = async () => {
     const navegarAModulo = (modulo) => {
       switch (modulo) {
         case 'empleados':
-        router.push('/mantenimiento/empleados')
+        router.push('/empleados')
         break
         case 'mantenimientoEmpleados':
           router.push('/mantenimiento/usuarios')
