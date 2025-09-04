@@ -1,0 +1,52 @@
+// src/servicios/bienestar.js
+import axios from 'axios';
+const API_BASE_URL = '/api';
+
+function getAuthHeader() {
+  const token = localStorage.getItem('token');
+  return { Authorization: `Bearer ${token}` };
+}
+
+export const obtenerActividadesBienestar = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/bienestar`, { headers: getAuthHeader() });
+    return response.data;
+  } catch (error) {
+    console.error('Error al obtener actividades de bienestar:', error);
+    throw error;
+  }
+};
+
+export const crearActividadBienestar = async (datosActividad, auditor) => {
+  try {
+    const payload = { ...datosActividad, auditor };
+    const response = await axios.post(`${API_BASE_URL}/bienestar`, payload, { headers: getAuthHeader() });
+    return response.data;
+  } catch (error) {
+    console.error('Error al crear actividad de bienestar:', error);
+    throw error;
+  }
+};
+
+export const actualizarActividadBienestar = async (id, datosActualizados, auditor) => {
+  try {
+    const payload = { ...datosActualizados, auditor };
+    const response = await axios.put(`${API_BASE_URL}/bienestar/${id}`, payload, { headers: getAuthHeader() });
+    return response.data;
+  } catch (error) {
+    console.error('Error al actualizar actividad de bienestar:', error);
+    throw error;
+  }
+};
+
+export const eliminarActividadBienestar = async (id, auditor) => {
+  try {
+    await axios.delete(`${API_BASE_URL}/bienestar/${id}`, {
+      headers: getAuthHeader(),
+      data: { auditor }
+    });
+  } catch (error) {
+    console.error('Error al eliminar actividad de bienestar:', error);
+    throw error;
+  }
+};

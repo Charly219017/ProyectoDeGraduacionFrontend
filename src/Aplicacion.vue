@@ -11,7 +11,7 @@
 <script>
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import BarraNavegacion from './componentes/BarraNavegacion.vue'
+import BarraNavegacion from './components/BarraNavegacion.vue'
 
 export default {
   name: 'Aplicacion',
