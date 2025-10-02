@@ -1,4 +1,3 @@
-
 // frontend/src/componentes/Reclutamiento/AplicacionFormModal.vue
 <template>
   <div v-if="mostrar" class="modal-overlay">
@@ -13,7 +12,7 @@
             required
             class="w-full px-3 py-2 border rounded-md"
           >
-            <option v-for="vacante in vacantes" :key="vacante.id_vacante" :value="vacante.id_vacante">{{ vacante.nombre_vacante }}</option>
+            <option v-for="vacante in vacantes" :key="vacante.id_vacante" :value="vacante.id_vacante">{{ vacante.titulo }}</option>
           </select>
         </div>
         <div class="form-group">
@@ -36,6 +35,28 @@
             required 
             class="w-full px-3 py-2 border rounded-md"
           >
+        </div>
+        <div class="form-group">
+          <label for="estado_aplicacion">Estado</label>
+          <select 
+            id="estado_aplicacion" 
+            v-model="formularioLocal.estado_aplicacion" 
+            required
+            class="w-full px-3 py-2 border rounded-md"
+          >
+            <option value="En revisión">En revisión</option>
+            <option value="Aceptado">Aceptado</option>
+            <option value="Rechazado">Rechazado</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="observaciones">Observaciones</label>
+          <textarea 
+            id="observaciones" 
+            v-model="formularioLocal.observaciones" 
+            rows="3"
+            class="w-full px-3 py-2 border rounded-md"
+          ></textarea>
         </div>
         <div v-if="errorFormulario" class="error-message">
           {{ errorFormulario }}
@@ -130,6 +151,8 @@ const handleSubmit = () => {
   width: 100%;
   max-width: 500px;
   animation: modalIn 0.2s;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 @keyframes modalIn {

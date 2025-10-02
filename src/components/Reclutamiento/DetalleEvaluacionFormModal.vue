@@ -37,15 +37,6 @@
             class="w-full px-3 py-2 border rounded-md"
           >
         </div>
-        <div class="form-group">
-          <label for="comentarios">Comentarios</label>
-          <textarea 
-            id="comentarios" 
-            v-model="formularioLocal.comentarios" 
-            rows="4"
-            class="w-full px-3 py-2 border rounded-md"
-          ></textarea>
-        </div>
         <div v-if="errorFormulario" class="error-message">
           {{ errorFormulario }}
         </div>

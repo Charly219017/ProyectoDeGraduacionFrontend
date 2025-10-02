@@ -1,4 +1,3 @@
-
 // frontend/src/componentes/Contratos/ContratoFormModal.vue
 <template>
   <div v-if="mostrar" class="modal-overlay">
@@ -6,15 +5,25 @@
       <h2 class="text-2xl font-bold mb-4">{{ modo === 'crear' ? 'Crear Nuevo Contrato' : 'Editar Contrato' }}</h2>
       <form @submit.prevent="handleSubmit">
         <div class="form-group">
-          <label for="id_puesto">Puesto</label>
+          <label for="id_empleado">Empleado</label>
           <select 
-            id="id_puesto" 
-            v-model="formularioLocal.id_puesto" 
+            id="id_empleado" 
+            v-model="formularioLocal.id_empleado" 
             required
             class="w-full px-3 py-2 border rounded-md"
           >
-            <option v-for="puesto in puestos" :key="puesto.id_puesto" :value="puesto.id_puesto">{{ puesto.nombre_puesto }}</option>
+            <option v-for="empleado in empleados" :key="empleado.id_empleado" :value="empleado.id_empleado">{{ empleado.nombre_completo }}</option>
           </select>
+        </div>
+        <div class="form-group">
+          <label for="tipo_contrato">Tipo de Contrato</label>
+          <input 
+            type="text" 
+            id="tipo_contrato" 
+            v-model="formularioLocal.tipo_contrato" 
+            required 
+            class="w-full px-3 py-2 border rounded-md"
+          >
         </div>
         <div class="form-group">
           <label for="fecha_inicio">Fecha de Inicio</label>
@@ -36,14 +45,13 @@
           >
         </div>
         <div class="form-group">
-          <label for="salario">Salario</label>
-          <input 
-            type="number" 
-            id="salario" 
-            v-model="formularioLocal.salario" 
-            required 
+          <label for="observaciones">Observaciones</label>
+          <textarea 
+            id="observaciones" 
+            v-model="formularioLocal.observaciones" 
+            rows="3"
             class="w-full px-3 py-2 border rounded-md"
-          >
+          ></textarea>
         </div>
         <div v-if="errorFormulario" class="error-message">
           {{ errorFormulario }}
@@ -84,7 +92,7 @@ const props = defineProps({
     type: Object,
     default: () => ({})
   },
-  puestos: {
+  empleados: {
     type: Array,
     required: true
   }
@@ -106,7 +114,7 @@ watch(() => props.contratoData, (newData) => {
 }, { deep: true, immediate: true });
 
 const handleSubmit = () => {
-  if (!formularioLocal.value.id_puesto || !formularioLocal.value.fecha_inicio || !formularioLocal.value.salario) {
+  if (!formularioLocal.value.id_empleado || !formularioLocal.value.tipo_contrato || !formularioLocal.value.fecha_inicio) {
     errorFormulario.value = 'Por favor, completa todos los campos obligatorios.';
     return;
   }
@@ -163,7 +171,7 @@ h2 {
   color: #4b5563;
 }
 
-input, select {
+input, select, textarea {
   width: 100%;
   padding: 10px 14px;
   border: 1px solid #e2e8f0;
@@ -175,7 +183,7 @@ input, select {
   outline: none;
 }
 
-input:focus, select:focus {
+input:focus, select:focus, textarea:focus {
   border-color: #667eea;
   background: #fff;
 }

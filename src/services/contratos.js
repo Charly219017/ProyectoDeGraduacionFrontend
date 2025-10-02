@@ -20,7 +20,7 @@ class ContratoService {
 
   async obtenerContratos() {
     try {
-      const response = await this.axiosInstance.get('/contratos');
+      const response = await this.axiosInstance.get('/contratos/obtener-todos');
       return response.data;
     } catch (error) {
       console.error('Error al obtener contratos:', error);
@@ -38,10 +38,20 @@ class ContratoService {
     }
   }
 
+  async obtenerContratoPorId(id) {
+    try {
+      const response = await this.axiosInstance.get(`/contratos/obtener/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Error al obtener el contrato con ID ${id}:`, error);
+      throw error;
+    }
+  }
+
   async crearContrato(datosContrato, auditor) {
     try {
       const payload = { ...datosContrato, auditor };
-      const response = await this.axiosInstance.post('/contratos', payload);
+      const response = await this.axiosInstance.post('/contratos/crear', payload);
       return response.data;
     } catch (error) {
       console.error('Error al crear contrato:', error);
@@ -52,7 +62,7 @@ class ContratoService {
   async actualizarContrato(id, datosActualizados, auditor) {
     try {
       const payload = { ...datosActualizados, auditor };
-      const response = await this.axiosInstance.put(`/contratos/${id}`, payload);
+      const response = await this.axiosInstance.put(`/contratos/actualizar/${id}`, payload);
       return response.data;
     } catch (error) {
       console.error('Error al actualizar contrato:', error);
@@ -62,7 +72,7 @@ class ContratoService {
 
   async eliminarContrato(id, auditor) {
     try {
-      await this.axiosInstance.delete(`/contratos/${id}`, {
+      await this.axiosInstance.delete(`/contratos/eliminar/${id}`, {
         data: { auditor }
       });
     } catch (error) {

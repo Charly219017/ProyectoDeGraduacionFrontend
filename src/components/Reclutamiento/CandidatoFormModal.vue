@@ -1,4 +1,3 @@
-
 // frontend/src/componentes/Reclutamiento/CandidatoFormModal.vue
 <template>
   <div v-if="mostrar" class="modal-overlay">
@@ -16,11 +15,11 @@
           >
         </div>
         <div class="form-group">
-          <label for="correo_electronico">Correo Electrónico</label>
+          <label for="correo">Correo Electrónico</label>
           <input 
             type="email" 
-            id="correo_electronico" 
-            v-model="formularioLocal.correo_electronico" 
+            id="correo" 
+            v-model="formularioLocal.correo" 
             required 
             class="w-full px-3 py-2 border rounded-md"
           >
@@ -40,6 +39,16 @@
             type="url" 
             id="cv_url" 
             v-model="formularioLocal.cv_url" 
+            class="w-full px-3 py-2 border rounded-md"
+          >
+        </div>
+        <div class="form-group">
+          <label for="fecha_aplicacion">Fecha de Aplicación</label>
+          <input 
+            type="date" 
+            id="fecha_aplicacion" 
+            v-model="formularioLocal.fecha_aplicacion" 
+            required
             class="w-full px-3 py-2 border rounded-md"
           >
         </div>
@@ -94,7 +103,7 @@ watch(() => props.candidatoData, (newData) => {
 }, { deep: true, immediate: true });
 
 const handleSubmit = () => {
-  if (!formularioLocal.value.nombre_completo || !formularioLocal.value.correo_electronico) {
+  if (!formularioLocal.value.nombre_completo || !formularioLocal.value.correo) {
     errorFormulario.value = 'Por favor, completa todos los campos obligatorios.';
     return;
   }
@@ -125,6 +134,8 @@ const handleSubmit = () => {
   width: 100%;
   max-width: 500px;
   animation: modalIn 0.2s;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 @keyframes modalIn {

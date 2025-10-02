@@ -1,4 +1,3 @@
-
 // frontend/src/componentes/Mantenimiento/DependenciaFormModal.vue
 <template>
   <div v-if="mostrar" class="modal-overlay">
@@ -6,14 +5,26 @@
       <h2 class="text-2xl font-bold mb-4">{{ modo === 'crear' ? 'Crear Nueva Dependencia' : 'Editar Dependencia' }}</h2>
       <form @submit.prevent="handleSubmit">
         <div class="form-group">
-          <label for="nombre_dependencia">Nombre de la Dependencia</label>
-          <input 
-            type="text" 
-            id="nombre_dependencia" 
-            v-model="formularioLocal.nombre_dependencia" 
-            required 
+          <label for="id_puesto_superior">Puesto Superior</label>
+          <select 
+            id="id_puesto_superior" 
+            v-model="formularioLocal.id_puesto_superior" 
+            required
             class="w-full px-3 py-2 border rounded-md"
           >
+            <option v-for="puesto in puestos" :key="puesto.id_puesto" :value="puesto.id_puesto">{{ puesto.nombre_puesto }}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="id_puesto_subordinado">Puesto Subordinado</label>
+          <select 
+            id="id_puesto_subordinado" 
+            v-model="formularioLocal.id_puesto_subordinado" 
+            required
+            class="w-full px-3 py-2 border rounded-md"
+          >
+            <option v-for="puesto in puestos" :key="puesto.id_puesto" :value="puesto.id_puesto">{{ puesto.nombre_puesto }}</option>
+          </select>
         </div>
         <div v-if="errorFormulario" class="error-message">
           {{ errorFormulario }}
@@ -52,7 +63,11 @@ const props = defineProps({
   },
   dependenciaData: {
     type: Object,
-    default: () => ({ nombre_dependencia: '' })
+    default: () => ({})
+  },
+  puestos: {
+    type: Array,
+    required: true
   }
 });
 
@@ -66,7 +81,7 @@ watch(() => props.dependenciaData, (newData) => {
 }, { deep: true, immediate: true });
 
 const handleSubmit = () => {
-  if (!formularioLocal.value.nombre_dependencia) {
+  if (!formularioLocal.value.id_puesto_superior || !formularioLocal.value.id_puesto_subordinado) {
     errorFormulario.value = 'Por favor, completa todos los campos obligatorios.';
     return;
   }
@@ -123,7 +138,7 @@ h2 {
   color: #4b5563;
 }
 
-input {
+input, select {
   width: 100%;
   padding: 10px 14px;
   border: 1px solid #e2e8f0;
@@ -135,7 +150,7 @@ input {
   outline: none;
 }
 
-input:focus {
+input:focus, select:focus {
   border-color: #667eea;
   background: #fff;
 }

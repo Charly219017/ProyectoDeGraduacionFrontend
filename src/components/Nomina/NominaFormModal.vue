@@ -17,41 +17,61 @@
           </select>
         </div>
         <div class="form-group">
-          <label for="fecha_pago">Fecha de Pago</label>
+          <label for="mes">Mes</label>
           <input 
-            type="date" 
-            id="fecha_pago" 
-            v-model="formularioLocal.fecha_pago" 
+            type="number" 
+            id="mes" 
+            v-model="formularioLocal.mes" 
             required 
             class="w-full px-3 py-2 border rounded-md"
           >
         </div>
         <div class="form-group">
-          <label for="monto_bruto">Monto Bruto</label>
+          <label for="anio">Año</label>
           <input 
             type="number" 
-            id="monto_bruto" 
-            v-model="formularioLocal.monto_bruto" 
+            id="anio" 
+            v-model="formularioLocal.anio" 
             required 
             class="w-full px-3 py-2 border rounded-md"
           >
         </div>
         <div class="form-group">
-          <label for="deducciones">Deducciones</label>
+          <label for="sueldo_bruto">Sueldo Bruto</label>
           <input 
             type="number" 
-            id="deducciones" 
-            v-model="formularioLocal.deducciones" 
+            id="sueldo_bruto" 
+            v-model="formularioLocal.sueldo_bruto" 
             required 
             class="w-full px-3 py-2 border rounded-md"
           >
         </div>
         <div class="form-group">
-          <label for="monto_neto">Monto Neto</label>
+          <label for="bonificaciones">Bonificaciones</label>
           <input 
             type="number" 
-            id="monto_neto" 
-            v-model="formularioLocal.monto_neto" 
+            id="bonificaciones" 
+            v-model="formularioLocal.bonificaciones" 
+            required 
+            class="w-full px-3 py-2 border rounded-md"
+          >
+        </div>
+        <div class="form-group">
+          <label for="descuentos">Descuentos</label>
+          <input 
+            type="number" 
+            id="descuentos" 
+            v-model="formularioLocal.descuentos" 
+            required 
+            class="w-full px-3 py-2 border rounded-md"
+          >
+        </div>
+        <div class="form-group">
+          <label for="sueldo_neto">Sueldo Neto</label>
+          <input 
+            type="number" 
+            id="sueldo_neto" 
+            v-model="formularioLocal.sueldo_neto" 
             required 
             class="w-full px-3 py-2 border rounded-md"
           >

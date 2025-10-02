@@ -20,10 +20,20 @@ class DashboardService {
 
   async obtenerEstadisticas() {
     try {
-      const response = await this.axiosInstance.get('/estadisticas');
+      const response = await this.axiosInstance.get('/dashboardestadisticas');
       return response.data;
     } catch (error) {
       console.error('Error al cargar estadísticas:', error);
+      throw error;
+    }
+  }
+
+  async obtenerResumen() {
+    try {
+      const response = await this.axiosInstance.get('/dashboardresumen');
+      return response.data;
+    } catch (error) {
+      console.error('Error al cargar el resumen:', error);
       throw error;
     }
   }

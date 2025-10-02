@@ -68,7 +68,8 @@ const formulario = ref({
   nombre_usuario: '',
   correo: '',
   contrasena: '',
-  id_rol: 2 // Por defecto
+  id_rol: 2,
+  estadousuario: true
 });
 
 // Funciones para la gestión de usuarios
@@ -101,10 +102,11 @@ const abrirFormulario = (modo, usuario = null) => {
       nombre_usuario: '',
       correo: '',
       contrasena: '',
-      id_rol: 2
+      id_rol: 2,
+      estadousuario: true
     };
   } else {
-    formulario.value = { ...usuario, contrasena: '', id_rol: usuario.id_rol };
+    formulario.value = { ...usuario, contrasena: '' };
   }
   mostrarModal.value = true;
 };

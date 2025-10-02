@@ -63,7 +63,11 @@ const props = defineProps({
   puestoData: {
     type: Object,
     default: () => ({})
-  }
+  },
+  carreras: {
+    type: Array,
+    required: true,
+  },
 });
 
 const emit = defineEmits(['cerrar', 'guardar']);

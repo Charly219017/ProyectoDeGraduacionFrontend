@@ -1,4 +1,3 @@
-
 // frontend/src/componentes/Reclutamiento/AplicacionesTabla.vue
 <template>
   <div class="aplicaciones-card">
@@ -12,6 +11,8 @@
             <th>Vacante</th>
             <th>Candidato</th>
             <th>Fecha de Aplicación</th>
+            <th>Estado</th>
+            <th>Observaciones</th>
             <th>Acciones</th>
           </tr>
         </thead>
@@ -21,6 +22,8 @@
             <td>{{ getVacanteNombre(aplicacion.id_vacante) }}</td>
             <td>{{ getCandidatoNombre(aplicacion.id_candidato) }}</td>
             <td>{{ new Date(aplicacion.fecha_aplicacion).toLocaleDateString() }}</td>
+            <td>{{ aplicacion.estado_aplicacion }}</td>
+            <td>{{ aplicacion.observaciones }}</td>
             <td>
               <button class="btn-editar" @click="$emit('editar', aplicacion)">Editar</button>
               <button class="btn-eliminar" @click="$emit('eliminar', aplicacion.id_aplicacion)">Eliminar</button>
@@ -61,7 +64,7 @@ const emit = defineEmits(['editar', 'eliminar']);
 
 const getVacanteNombre = (id_vacante) => {
   const vacante = props.vacantes.find(v => v.id_vacante === id_vacante);
-  return vacante ? vacante.nombre_vacante : 'Desconocido';
+  return vacante ? vacante.titulo : 'Desconocido';
 };
 
 const getCandidatoNombre = (id_candidato) => {

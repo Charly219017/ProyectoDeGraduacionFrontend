@@ -9,7 +9,7 @@ function getAuthHeader() {
 
 export const obtenerDependencias = async () => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/dependencias`, { headers: getAuthHeader() });
+    const response = await axios.get(`${API_BASE_URL}/dependencias/obtenerdependencias`, { headers: getAuthHeader() });
     return response.data;
   } catch (error) {
     console.error('Error al obtener dependencias:', error);
@@ -20,10 +20,20 @@ export const obtenerDependencias = async () => {
 export const crearDependencia = async (datosDependencia, auditor) => {
   try {
     const payload = { ...datosDependencia, auditor };
-    const response = await axios.post(`${API_BASE_URL}/dependencias`, payload, { headers: getAuthHeader() });
+    const response = await axios.post(`${API_BASE_URL}/dependencias/creardependencia`, payload, { headers: getAuthHeader() });
     return response.data;
   } catch (error) {
     console.error('Error al crear dependencia:', error);
+    throw error;
+  }
+};
+
+export const obtenerDependenciaPorId = async (id) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/dependencias/${id}`, { headers: getAuthHeader() });
+    return response.data;
+  } catch (error) {
+    console.error(`Error al obtener la dependencia con ID ${id}:`, error);
     throw error;
   }
 };

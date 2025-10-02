@@ -1,4 +1,3 @@
-
 // frontend/src/componentes/Reclutamiento/CandidatosTabla.vue
 <template>
   <div class="candidatos-card">
@@ -19,7 +18,7 @@
           <tr v-for="candidato in candidatos" :key="candidato.id_candidato">
             <td>{{ candidato.id_candidato }}</td>
             <td>{{ candidato.nombre_completo }}</td>
-            <td>{{ candidato.correo_electronico }}</td>
+            <td>{{ candidato.correo }}</td>
             <td>{{ candidato.telefono }}</td>
             <td>
               <button class="btn-editar" @click="$emit('editar', candidato)">Editar</button>

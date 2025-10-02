@@ -15,6 +15,7 @@
     <EmpleadosList
       :empleados="empleados" 
       :cargando="cargando"
+      :puestos="puestos"
       @editar="abrirFormulario('editar', $event)" 
       @eliminar="eliminarEmpleado"
     />
@@ -76,11 +77,15 @@ const modoFormulario = ref('crear');
 const formulario = ref({
   id_empleado: null,
   nombre_completo: '',
-  correo: '',
-  puesto: '',
-  departamento: '',
+  dpi: '',
+  telefono: '',
+  correo_personal: '',
+  direccion: '',
+  fecha_nacimiento: '',
+  genero: '',
+  estado_civil: '',
   fecha_ingreso: '',
-  salario: 0,
+  id_puesto: '',
 });
 
 const mostrarConfirmacion = ref(false);
@@ -112,11 +117,15 @@ const abrirFormulario = (modo, empleado = null) => {
     formulario.value = {
       id_empleado: null,
       nombre_completo: '',
-      correo: '',
-      puesto: '',
-      departamento: '',
+      dpi: '',
+      telefono: '',
+      correo_personal: '',
+      direccion: '',
+      fecha_nacimiento: '',
+      genero: '',
+      estado_civil: '',
       fecha_ingreso: '',
-      salario: 0
+      id_puesto: '',
     };
   } else {
     formulario.value = { ...empleado };

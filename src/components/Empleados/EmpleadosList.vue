@@ -17,7 +17,6 @@
             <th>Nombre</th>
             <th>Correo</th>
             <th>Puesto</th>
-            <th>Departamento</th>
             <th>Acciones</th>
           </tr>
         </thead>
@@ -28,9 +27,8 @@
           >
             <td>{{ empleado.id_empleado }}</td>
             <td>{{ empleado.nombre_completo }}</td>
-            <td>{{ empleado.correo }}</td>
-            <td>{{ empleado.puesto }}</td>
-            <td>{{ empleado.departamento }}</td>
+            <td>{{ empleado.correo_personal }}</td>
+            <td>{{ getPuestoNombre(empleado.id_puesto) }}</td>
             <td class="acciones-cell">
               <button @click="$emit('editar', empleado)" class="btn-editar">
                 Editar
@@ -61,8 +59,17 @@ const props = defineProps({
   cargando: {
     type: Boolean,
     required: true
+  },
+  puestos: {
+    type: Array,
+    required: true
   }
 });
+
+const getPuestoNombre = (puestoId) => {
+  const puesto = props.puestos.find(p => p.id_puesto === puestoId);
+  return puesto ? puesto.nombre_puesto : 'No asignado';
+};
 
 const emits = defineEmits(['editar', 'eliminar']);
 </script>

@@ -26,48 +26,77 @@
                 required
               />
             </div>
-
             <div>
-              <label for="correo" class="block text-sm font-medium text-gray-700 mb-2">Correo Electrónico</label>
+              <label for="dpi" class="block text-sm font-medium text-gray-700 mb-2">DPI</label>
               <input 
-                type="email"
-                id="correo"
-                v-model="formularioLocal.correo"
+                type="text"
+                id="dpi"
+                v-model="formularioLocal.dpi"
                 class="form-input"
                 required
               />
             </div>
-
             <div>
-              <label for="puesto" class="block text-sm font-medium text-gray-700 mb-2">Puesto</label>
-              <select
-                id="puesto"
-                v-model="formularioLocal.puesto"
-                class="form-select"
+              <label for="telefono" class="block text-sm font-medium text-gray-700 mb-2">Teléfono</label>
+              <input 
+                type="text"
+                id="telefono"
+                v-model="formularioLocal.telefono"
+                class="form-input"
+              />
+            </div>
+            <div>
+              <label for="correo_personal" class="block text-sm font-medium text-gray-700 mb-2">Correo Electrónico</label>
+              <input 
+                type="email"
+                id="correo_personal"
+                v-model="formularioLocal.correo_personal"
+                class="form-input"
                 required
+              />
+            </div>
+            <div>
+              <label for="direccion" class="block text-sm font-medium text-gray-700 mb-2">Dirección</label>
+              <input 
+                type="text"
+                id="direccion"
+                v-model="formularioLocal.direccion"
+                class="form-input"
+              />
+            </div>
+            <div>
+              <label for="fecha_nacimiento" class="block text-sm font-medium text-gray-700 mb-2">Fecha de Nacimiento</label>
+              <input 
+                type="date"
+                id="fecha_nacimiento"
+                v-model="formularioLocal.fecha_nacimiento"
+                class="form-input"
+              />
+            </div>
+            <div>
+              <label for="genero" class="block text-sm font-medium text-gray-700 mb-2">Género</label>
+              <select
+                id="genero"
+                v-model="formularioLocal.genero"
+                class="form-select"
               >
-                <option value="" disabled>Selecciona un puesto</option>
-                <option v-for="puesto in puestos" :key="puesto.id_puesto" :value="puesto.id_puesto">
-                  {{ puesto.nombre_puesto }}
-                </option>
+                <option value="" disabled>Selecciona un género</option>
+                <option value="Masculino">Masculino</option>
+                <option value="Femenino">Femenino</option>
               </select>
             </div>
-
             <div>
-              <label for="departamento" class="block text-sm font-medium text-gray-700 mb-2">Departamento</label>
+              <label for="estado_civil" class="block text-sm font-medium text-gray-700 mb-2">Estado Civil</label>
               <select
-                id="departamento"
-                v-model="formularioLocal.departamento"
+                id="estado_civil"
+                v-model="formularioLocal.estado_civil"
                 class="form-select"
-                required
               >
-                <option value="" disabled>Selecciona un departamento</option>
-                <option v-for="carrera in carreras" :key="carrera.id_carrera" :value="carrera.id_carrera">
-                  {{ carrera.nombre_carrera }}
-                </option>
+                <option value="" disabled>Selecciona un estado civil</option>
+                <option value="Soltero(a)">Soltero(a)</option>
+                <option value="Casado(a)">Casado(a)</option>
               </select>
             </div>
-
             <div>
               <label for="fecha_ingreso" class="block text-sm font-medium text-gray-700 mb-2">Fecha de Ingreso</label>
               <input 
@@ -78,16 +107,34 @@
                 required
               />
             </div>
-            
             <div>
-              <label for="salario" class="block text-sm font-medium text-gray-700 mb-2">Salario</label>
-              <input 
-                type="number"
-                id="salario"
-                v-model="formularioLocal.salario"
-                class="form-input"
+              <label for="id_puesto" class="block text-sm font-medium text-gray-700 mb-2">Puesto</label>
+              <select
+                id="id_puesto"
+                v-model="formularioLocal.id_puesto"
+                class="form-select"
                 required
-              />
+              >
+                <option value="" disabled>Selecciona un puesto</option>
+                <option v-for="puesto in puestos" :key="puesto.id_puesto" :value="puesto.id_puesto">
+                  {{ puesto.nombre_puesto }}
+                </option>
+              </select>
+            </div>
+            <div>
+              <label for="estado_empleo" class="block text-sm font-medium text-gray-700 mb-2">Estado del Empleado</label>
+              <select
+                id="estado_empleo"
+                v-model="formularioLocal.estado_empleo"
+                class="form-select"
+              >
+                <option value="Activo">Activo</option>
+                <option value="Inactivo">Inactivo</option>
+              </select>
+            </div>
+            <div v-if="carreraNombre">
+              <label class="block text-sm font-medium text-gray-700 mb-2">Departamento</label>
+              <p class="form-input-readonly">{{ carreraNombre }}</p>
             </div>
           </div>
           
@@ -113,7 +160,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, computed } from 'vue';
 
 const props = defineProps({
   mostrar: {
@@ -129,11 +176,16 @@ const props = defineProps({
     default: () => ({
       id_empleado: null,
       nombre_completo: '',
-      correo: '',
-      puesto: '',
-      departamento: '',
+      dpi: '',
+      telefono: '',
+      correo_personal: '',
+      direccion: '',
+      fecha_nacimiento: '',
+      genero: '',
+      estado_civil: '',
       fecha_ingreso: '',
-      salario: 0
+      id_puesto: '',
+      estado_empleo: 'Activo',
     }),
   },
   puestos: {
@@ -152,6 +204,17 @@ const formularioLocal = ref({ ...props.empleadoData });
 
 watch(() => props.empleadoData, (newData) => {
   formularioLocal.value = { ...newData };
+});
+
+const carreraNombre = computed(() => {
+  if (formularioLocal.value.id_puesto && props.puestos.length && props.carreras.length) {
+    const puesto = props.puestos.find(p => p.id_puesto === formularioLocal.value.id_puesto);
+    if (puesto && puesto.id_carrera) {
+      const carrera = props.carreras.find(c => c.id_carrera === puesto.id_carrera);
+      return carrera ? carrera.nombre_carrera : '';
+    }
+  }
+  return '';
 });
 
 const manejarGuardar = () => {
@@ -185,6 +248,8 @@ const cerrar = () => {
   padding: 32px;
   transform: scale(0.95);
   animation: modal-pop 0.3s ease-out forwards;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 .modal-title {
@@ -204,6 +269,15 @@ const cerrar = () => {
   border-radius: 8px;
   font-size: 14px;
   transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-input-readonly {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  background-color: #f3f4f6;
 }
 
 .form-input:focus,

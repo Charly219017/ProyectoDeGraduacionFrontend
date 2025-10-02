@@ -1,4 +1,3 @@
-
 // frontend/src/vistas/ReclutamientoAplicaciones.vue
 <template>
   <div class="reclutamiento-aplicaciones-container">
@@ -52,7 +51,9 @@ const formulario = ref({
   id_aplicacion: null,
   id_vacante: null,
   id_candidato: null,
-  fecha_aplicacion: ''
+  fecha_aplicacion: '',
+  estado_aplicacion: 'En revisión',
+  observaciones: ''
 });
 
 const obtenerDatos = async () => {
@@ -80,10 +81,13 @@ const abrirFormulario = (modo, aplicacion = null) => {
       id_aplicacion: null,
       id_vacante: null,
       id_candidato: null,
-      fecha_aplicacion: ''
+      fecha_aplicacion: new Date().toISOString().slice(0, 10),
+      estado_aplicacion: 'En revisión',
+      observaciones: ''
     };
   } else {
-    formulario.value = { ...aplicacion };
+    const fecha = aplicacion.fecha_aplicacion ? new Date(aplicacion.fecha_aplicacion).toISOString().slice(0, 10) : '';
+    formulario.value = { ...aplicacion, fecha_aplicacion: fecha };
   }
   mostrarModal.value = true;
 };

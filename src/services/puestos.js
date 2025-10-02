@@ -1,4 +1,3 @@
-// src/services/puestos.js
 import axios from 'axios';
 
 class PuestoService {
@@ -20,7 +19,7 @@ class PuestoService {
 
   async obtenerPuestos() {
     try {
-      const response = await this.axiosInstance.get('/puestos/'); // Added trailing slash
+      const response = await this.axiosInstance.get('/puestos/obtenerpuestos');
       return response.data;
     } catch (error) {
       console.error('Error al obtener puestos:', error);
@@ -28,10 +27,10 @@ class PuestoService {
     }
   }
 
-  async crearPuesto(datosPuesto, auditor) {
+  async crearPuesto(datosPuesto, idUsuario) {
     try {
-      const payload = { ...datosPuesto, auditor };
-      const response = await this.axiosInstance.post('/puestos/', payload); // Added trailing slash
+      const payload = { ...datosPuesto, creado_por: idUsuario };
+      const response = await this.axiosInstance.post('/puestos/crearpuesto', payload);
       return response.data;
     } catch (error) {
       console.error('Error al crear puesto:', error);
@@ -39,9 +38,19 @@ class PuestoService {
     }
   }
 
-  async actualizarPuesto(id, datosActualizados, auditor) {
+  async obtenerPuestoPorId(id) {
     try {
-      const payload = { ...datosActualizados, auditor };
+      const response = await this.axiosInstance.get(`/puestos/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Error al obtener el puesto con ID ${id}:`, error);
+      throw error;
+    }
+  }
+
+  async actualizarPuesto(id, datosActualizados, idUsuario) {
+    try {
+      const payload = { ...datosActualizados, actualizado_por: idUsuario };
       const response = await this.axiosInstance.put(`/puestos/${id}`, payload);
       return response.data;
     } catch (error) {
@@ -50,9 +59,9 @@ class PuestoService {
     }
   }
 
-  async eliminarPuesto(id, auditor) {
+  async eliminarPuesto(id, idUsuario) {
     try {
-      await this.axiosInstance.delete(`/puestos/${id}`);
+      await this.axiosInstance.delete(`/puestos/${id}`, { data: { actualizado_por: idUsuario } });
     } catch (error) {
       console.error('Error al eliminar puesto:', error);
       throw error;

@@ -18,7 +18,7 @@ function getAuthHeader() {
  */
 export const obtenerTodosUsuarios = async () => {
   try {
-    const response = await axios.get(`${BASE_URL}/usuarios`, {
+    const response = await axios.get(`${BASE_URL}/obtebertodoslosmantenimientos/usuarios`, {
       headers: getAuthHeader()
     });
     return response.data;
@@ -54,7 +54,7 @@ export const crearUsuario = async (datosUsuario, auditorId) => {
   try {
     // Incluimos el ID del auditor en el payload para el registro de auditoría en el backend.
     const payload = { ...datosUsuario, auditor: auditorId };
-    const response = await axios.post(`${BASE_URL}/usuarios`, payload, {
+    const response = await axios.post(`${BASE_URL}/crearmantenimiento/usuarios`, payload, {
       headers: getAuthHeader()
     });
     return response.data;

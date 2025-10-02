@@ -52,6 +52,17 @@
             <option :value="7">Externo</option>
           </select>
         </div>
+        <div class="form-group">
+          <label for="estadousuario" class="flex items-center">
+            <input 
+              type="checkbox" 
+              id="estadousuario" 
+              v-model="formularioLocal.estadousuario" 
+              class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+            >
+            <span class="ml-2 text-gray-700">Usuario Activo</span>
+          </label>
+        </div>
         <div v-if="errorFormulario" class="error-message">
           {{ errorFormulario }}
         </div>
@@ -134,6 +145,8 @@ const handleSubmit = () => {
   width: 100%;
   max-width: 500px;
   animation: modalIn 0.2s;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 @keyframes modalIn {

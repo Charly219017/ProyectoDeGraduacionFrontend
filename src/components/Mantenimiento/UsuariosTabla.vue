@@ -11,6 +11,7 @@
             <th>Nombre</th>
             <th>Email</th>
             <th>Rol</th>
+            <th>Estado</th>
             <th>Acciones</th>
           </tr>
         </thead>
@@ -20,6 +21,13 @@
             <td>{{ usuario.nombre_usuario }}</td>
             <td>{{ usuario.correo }}</td>
             <td>{{ usuario.rol }}</td>
+            <td>
+              <span 
+                :class="usuario.estadousuario ? 'text-green-600 bg-green-100 px-2 py-1 rounded-full text-xs font-medium' : 'text-red-600 bg-red-100 px-2 py-1 rounded-full text-xs font-medium'"
+              >
+                {{ usuario.estadousuario ? 'Activo' : 'Inactivo' }}
+              </span>
+            </td>
             <td>
               <button class="btn-editar" @click="$emit('editar', usuario)">Editar</button>
               <button class="btn-eliminar" @click="$emit('eliminar', usuario.id_usuario)">Eliminar</button>

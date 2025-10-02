@@ -20,7 +20,7 @@ class EmpleadoService {
 
   async obtenerTodosEmpleados() {
     try {
-      const response = await this.axiosInstance.get('/empleados/'); // Added trailing slash
+      const response = await this.axiosInstance.get('/empleados/obtenerempleados');
       return response.data;
     } catch (error) {
       console.error('Error al obtener empleados:', error);
@@ -30,7 +30,7 @@ class EmpleadoService {
 
   async obtenerEmpleadoPorId(id) {
     try {
-      const response = await this.axiosInstance.get(`/empleados/${id}`);
+      const response = await this.axiosInstance.get(`/empleados/obtener/${id}`);
       return response.data;
     } catch (error) {
       console.error(`Error al obtener el empleado con ID ${id}:`, error);
@@ -38,10 +38,10 @@ class EmpleadoService {
     }
   }
 
-  async crearEmpleado(datosEmpleado, auditor) {
+  async crearEmpleado(datosEmpleado, idUsuario) {
     try {
-      const payload = { ...datosEmpleado, auditor };
-      const response = await this.axiosInstance.post('/empleados/', payload); // Added trailing slash
+      const payload = { ...datosEmpleado, creado_por: idUsuario };
+      const response = await this.axiosInstance.post('/empleados/crearempleado', payload);
       return response.data;
     } catch (error) {
       console.error('Error al crear empleado:', error);
@@ -49,10 +49,10 @@ class EmpleadoService {
     }
   }
 
-  async actualizarEmpleado(id, datosActualizados, auditor) {
+  async actualizarEmpleado(id, datosActualizados, idUsuario) {
     try {
-      const payload = { ...datosActualizados, auditor };
-      const response = await this.axiosInstance.put(`/empleados/${id}`, payload);
+      const payload = { ...datosActualizados, actualizado_por: idUsuario };
+      const response = await this.axiosInstance.put(`/empleados/actualizar/${id}`, payload);
       return response.data;
     } catch (error) {
       console.error('Error al actualizar empleado:', error);
@@ -60,9 +60,10 @@ class EmpleadoService {
     }
   }
 
-  async eliminarEmpleado(id, auditor) {
+  async eliminarEmpleado(id, idUsuario) {
     try {
-      await this.axiosInstance.delete(`/empleados/${id}`);
+      // Borrado lógico: se actualiza el estado del empleado a 'inactivo'
+      await this.axiosInstance.delete(`/empleados/eliminar/${id}`, { data: { actualizado_por: idUsuario } });
     } catch (error) {
       console.error('Error al eliminar empleado:', error);
       throw error;

@@ -9,7 +9,7 @@ function getAuthHeader() {
 
 export const obtenerActividadesBienestar = async () => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/bienestar`, { headers: getAuthHeader() });
+    const response = await axios.get(`${API_BASE_URL}/bienestar/obtenertodo-bienestar`, { headers: getAuthHeader() });
     return response.data;
   } catch (error) {
     console.error('Error al obtener actividades de bienestar:', error);
@@ -20,7 +20,7 @@ export const obtenerActividadesBienestar = async () => {
 export const crearActividadBienestar = async (datosActividad, auditor) => {
   try {
     const payload = { ...datosActividad, auditor };
-    const response = await axios.post(`${API_BASE_URL}/bienestar`, payload, { headers: getAuthHeader() });
+    const response = await axios.post(`${API_BASE_URL}/bienestar/crearbienestar`, payload, { headers: getAuthHeader() });
     return response.data;
   } catch (error) {
     console.error('Error al crear actividad de bienestar:', error);
@@ -28,10 +28,20 @@ export const crearActividadBienestar = async (datosActividad, auditor) => {
   }
 };
 
+export const obtenerActividadBienestarPorId = async (id) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/bienestar/obtener/${id}`, { headers: getAuthHeader() });
+    return response.data;
+  } catch (error) {
+    console.error(`Error al obtener la actividad de bienestar con ID ${id}:`, error);
+    throw error;
+  }
+};
+
 export const actualizarActividadBienestar = async (id, datosActualizados, auditor) => {
   try {
     const payload = { ...datosActualizados, auditor };
-    const response = await axios.put(`${API_BASE_URL}/bienestar/${id}`, payload, { headers: getAuthHeader() });
+    const response = await axios.put(`${API_BASE_URL}/bienestar/actualizar/${id}`, payload, { headers: getAuthHeader() });
     return response.data;
   } catch (error) {
     console.error('Error al actualizar actividad de bienestar:', error);
@@ -41,7 +51,7 @@ export const actualizarActividadBienestar = async (id, datosActualizados, audito
 
 export const eliminarActividadBienestar = async (id, auditor) => {
   try {
-    await axios.delete(`${API_BASE_URL}/bienestar/${id}`, {
+    await axios.delete(`${API_BASE_URL}/bienestar/eliminar/${id}`, {
       headers: getAuthHeader(),
       data: { auditor }
     });

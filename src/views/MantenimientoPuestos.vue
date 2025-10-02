@@ -23,6 +23,7 @@
       :mostrar="mostrarModal"
       :modo="modoFormulario"
       :puesto-data="formulario"
+      :carreras="carreras" 
       @cerrar="cerrarModal"
       @guardar="guardarPuesto"
     />
@@ -34,9 +35,11 @@ import { ref, onMounted } from 'vue';
 import PuestosTabla from '../components/Mantenimiento/PuestosTabla.vue';
 import PuestoFormModal from '../components/Mantenimiento/PuestoFormModal.vue';
 import PuestoService from '../services/puestos.js';
+import CarreraService from '../services/carreras.js'; // Importar CarreraService
 import { useAuthStore } from '../store/index.js';
 
 const puestos = ref([]);
+const carreras = ref([]); // Añadir ref para carreras
 const cargando = ref(true);
 const mostrarModal = ref(false);
 const modoFormulario = ref('crear');
@@ -45,16 +48,22 @@ const authStore = useAuthStore();
 const formulario = ref({
   id_puesto: null,
   nombre_puesto: '',
-  salario_base: 0
+  salario_base: 0,
+  id_carrera: null // Añadir id_carrera al formulario
 });
 
 const obtenerDatos = async () => {
   cargando.value = true;
   try {
-    const respuesta = await PuestoService.obtenerPuestos();
-    puestos.value = respuesta;
+    // Obtener puestos y carreras en paralelo
+    const [puestosData, carrerasData] = await Promise.all([
+      PuestoService.obtenerPuestos(),
+      CarreraService.obtenerCarreras()
+    ]);
+    puestos.value = puestosData;
+    carreras.value = carrerasData;
   } catch (error) {
-    console.error('Error al obtener puestos:', error);
+    console.error('Error al obtener datos iniciales:', error);
   } finally {
     cargando.value = false;
   }
@@ -66,7 +75,8 @@ const abrirFormulario = (modo, puesto = null) => {
     formulario.value = {
       id_puesto: null,
       nombre_puesto: '',
-      salario_base: 0
+      salario_base: 0,
+      id_carrera: null // Resetear id_carrera
     };
   } else {
     formulario.value = { ...puesto };

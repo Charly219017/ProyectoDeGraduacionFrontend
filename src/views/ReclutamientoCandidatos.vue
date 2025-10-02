@@ -1,4 +1,3 @@
-
 // frontend/src/vistas/ReclutamientoCandidatos.vue
 <template>
   <div class="reclutamiento-candidatos-container">
@@ -45,9 +44,10 @@ const authStore = useAuthStore();
 const formulario = ref({
   id_candidato: null,
   nombre_completo: '',
-  correo_electronico: '',
+  correo: '',
   telefono: '',
-  cv_url: ''
+  cv_url: '',
+  fecha_aplicacion: ''
 });
 
 const obtenerDatos = async () => {
@@ -68,12 +68,15 @@ const abrirFormulario = (modo, candidato = null) => {
     formulario.value = {
       id_candidato: null,
       nombre_completo: '',
-      correo_electronico: '',
+      correo: '',
       telefono: '',
-      cv_url: ''
+      cv_url: '',
+      fecha_aplicacion: new Date().toISOString().slice(0, 10)
     };
   } else {
-    formulario.value = { ...candidato };
+    // Ensure fecha_aplicacion is in YYYY-MM-DD format for the date input
+    const fecha = candidato.fecha_aplicacion ? new Date(candidato.fecha_aplicacion).toISOString().slice(0, 10) : '';
+    formulario.value = { ...candidato, fecha_aplicacion: fecha };
   }
   mostrarModal.value = true;
 };

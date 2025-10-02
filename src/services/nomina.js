@@ -21,7 +21,7 @@ class NominaService {
   // --- Nominas ---
   async obtenerNominas() {
     try {
-      const response = await this.axiosInstance.get('/nominas');
+      const response = await this.axiosInstance.get('/nomina/obtenernominas');
       return response.data;
     } catch (error) {
       console.error('Error al obtener nóminas:', error);
@@ -29,10 +29,20 @@ class NominaService {
     }
   }
 
+  async obtenerNominaPorId(id) {
+    try {
+      const response = await this.axiosInstance.get(`/nomina/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Error al obtener la nómina con ID ${id}:`, error);
+      throw error;
+    }
+  }
+
   async crearNomina(datosNomina, auditor) {
     try {
       const payload = { ...datosNomina, auditor };
-      const response = await this.axiosInstance.post('/nominas', payload);
+      const response = await this.axiosInstance.post('/nomina/crearnomina', payload);
       return response.data;
     } catch (error) {
       console.error('Error al crear nómina:', error);
@@ -43,7 +53,7 @@ class NominaService {
   async actualizarNomina(id, datosActualizados, auditor) {
     try {
       const payload = { ...datosActualizados, auditor };
-      const response = await this.axiosInstance.put(`/nominas/${id}`, payload);
+      const response = await this.axiosInstance.put(`/nomina/${id}`, payload);
       return response.data;
     } catch (error) {
       console.error('Error al actualizar nómina:', error);
@@ -53,7 +63,7 @@ class NominaService {
 
   async eliminarNomina(id, auditor) {
     try {
-      await this.axiosInstance.delete(`/nominas/${id}`, {
+      await this.axiosInstance.delete(`/nomina/${id}`, {
         data: { auditor }
       });
     } catch (error) {
@@ -65,7 +75,7 @@ class NominaService {
   // --- Vacaciones ---
   async obtenerVacaciones() {
     try {
-      const response = await this.axiosInstance.get('/vacaciones');
+      const response = await this.axiosInstance.get('/vacaciones/obtenervacaciones');
       return response.data;
     } catch (error) {
       console.error('Error al obtener vacaciones:', error);
@@ -73,10 +83,20 @@ class NominaService {
     }
   }
 
+  async obtenerVacacionPorId(id) {
+    try {
+      const response = await this.axiosInstance.get(`/vacaciones/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Error al obtener la vacación con ID ${id}:`, error);
+      throw error;
+    }
+  }
+
   async crearVacacion(datosVacacion, auditor) {
     try {
       const payload = { ...datosVacacion, auditor };
-      const response = await this.axiosInstance.post('/vacaciones', payload);
+      const response = await this.axiosInstance.post('/vacaciones/crearvacacion', payload);
       return response.data;
     } catch (error) {
       console.error('Error al crear vacación:', error);

@@ -1,4 +1,3 @@
-
 // frontend/src/componentes/Reclutamiento/EvaluacionFormModal.vue
 <template>
   <div v-if="mostrar" class="modal-overlay">
@@ -6,33 +5,42 @@
       <h2 class="text-2xl font-bold mb-4">{{ modo === 'crear' ? 'Crear Nueva Evaluación' : 'Editar Evaluación' }}</h2>
       <form @submit.prevent="handleSubmit">
         <div class="form-group">
-          <label for="id_aplicacion">Aplicación</label>
+          <label for="id_empleado">Empleado</label>
           <select 
-            id="id_aplicacion" 
-            v-model="formularioLocal.id_aplicacion" 
+            id="id_empleado" 
+            v-model="formularioLocal.id_empleado" 
             required
             class="w-full px-3 py-2 border rounded-md"
           >
-            <option v-for="aplicacion in aplicaciones" :key="aplicacion.id_aplicacion" :value="aplicacion.id_aplicacion">Aplicación #{{ aplicacion.id_aplicacion }} (Vacante: {{ getVacanteNombre(aplicacion.id_vacante) }}, Candidato: {{ getCandidatoNombre(aplicacion.id_candidato) }})</option>
+            <option v-for="empleado in empleados" :key="empleado.id_empleado" :value="empleado.id_empleado">{{ empleado.nombre_completo }}</option>
           </select>
         </div>
         <div class="form-group">
-          <label for="id_criterio">Criterio</label>
-          <select 
-            id="id_criterio" 
-            v-model="formularioLocal.id_criterio" 
-            required
+          <label for="fecha_evaluacion">Fecha de Evaluación</label>
+          <input 
+            type="date" 
+            id="fecha_evaluacion" 
+            v-model="formularioLocal.fecha_evaluacion" 
+            required 
             class="w-full px-3 py-2 border rounded-md"
           >
-            <option v-for="criterio in criterios" :key="criterio.id_criterio" :value="criterio.id_criterio">{{ criterio.nombre_criterio }}</option>
-          </select>
         </div>
         <div class="form-group">
-          <label for="puntuacion">Puntuación</label>
+          <label for="evaluador">Evaluador</label>
+          <input 
+            type="text" 
+            id="evaluador" 
+            v-model="formularioLocal.evaluador" 
+            required 
+            class="w-full px-3 py-2 border rounded-md"
+          >
+        </div>
+        <div class="form-group">
+          <label for="puntuacion_total">Puntuación Total</label>
           <input 
             type="number" 
-            id="puntuacion" 
-            v-model="formularioLocal.puntuacion" 
+            id="puntuacion_total" 
+            v-model="formularioLocal.puntuacion_total" 
             required 
             class="w-full px-3 py-2 border rounded-md"
           >
@@ -85,19 +93,7 @@ const props = defineProps({
     type: Object,
     default: () => ({})
   },
-  aplicaciones: {
-    type: Array,
-    required: true
-  },
-  criterios: {
-    type: Array,
-    required: true
-  },
-  vacantes: {
-    type: Array,
-    required: true
-  },
-  candidatos: {
+  empleados: {
     type: Array,
     required: true
   }
@@ -110,20 +106,13 @@ const errorFormulario = ref(null);
 
 watch(() => props.evaluacionData, (newData) => {
   formularioLocal.value = { ...newData };
+  if (formularioLocal.value.fecha_evaluacion) {
+    formularioLocal.value.fecha_evaluacion = formularioLocal.value.fecha_evaluacion.split('T')[0];
+  }
 }, { deep: true, immediate: true });
 
-const getVacanteNombre = (id_vacante) => {
-  const vacante = props.vacantes.find(v => v.id_vacante === id_vacante);
-  return vacante ? vacante.nombre_vacante : 'Desconocido';
-};
-
-const getCandidatoNombre = (id_candidato) => {
-  const candidato = props.candidatos.find(c => c.id_candidato === id_candidato);
-  return candidato ? candidato.nombre_completo : 'Desconocido';
-};
-
 const handleSubmit = () => {
-  if (!formularioLocal.value.id_aplicacion || !formularioLocal.value.id_criterio || !formularioLocal.value.puntuacion) {
+  if (!formularioLocal.value.id_empleado || !formularioLocal.value.fecha_evaluacion || !formularioLocal.value.evaluador || !formularioLocal.value.puntuacion_total) {
     errorFormulario.value = 'Por favor, completa todos los campos obligatorios.';
     return;
   }

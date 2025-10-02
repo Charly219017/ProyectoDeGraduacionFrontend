@@ -21,7 +21,7 @@ class ReclutamientoService {
   // --- Vacantes ---
   async obtenerVacantes() {
     try {
-      const response = await this.axiosInstance.get('/vacantes');
+      const response = await this.axiosInstance.get('/vacantes/obtenervacantes');
       return response.data;
     } catch (error) {
       console.error('Error al obtener vacantes:', error);
@@ -29,10 +29,20 @@ class ReclutamientoService {
     }
   }
 
+  async obtenerVacantePorId(id) {
+    try {
+      const response = await this.axiosInstance.get(`/vacantes/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Error al obtener la vacante con ID ${id}:`, error);
+      throw error;
+    }
+  }
+
   async crearVacante(datosVacante, auditor) {
     try {
       const payload = { ...datosVacante, auditor };
-      const response = await this.axiosInstance.post('/vacantes', payload);
+      const response = await this.axiosInstance.post('/vacantes/crearvacantes', payload);
       return response.data;
     } catch (error) {
       console.error('Error al crear vacante:', error);
@@ -65,7 +75,7 @@ class ReclutamientoService {
   // --- Candidatos ---
   async obtenerCandidatos() {
     try {
-      const response = await this.axiosInstance.get('/candidatos');
+      const response = await this.axiosInstance.get('/candidatos/obtenercandidatos');
       return response.data;
     } catch (error) {
       console.error('Error al obtener candidatos:', error);
@@ -73,10 +83,20 @@ class ReclutamientoService {
     }
   }
 
+  async obtenerCandidatoPorId(id) {
+    try {
+      const response = await this.axiosInstance.get(`/candidatos/obtener/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Error al obtener el candidato con ID ${id}:`, error);
+      throw error;
+    }
+  }
+
   async crearCandidato(datosCandidato, auditor) {
     try {
       const payload = { ...datosCandidato, auditor };
-      const response = await this.axiosInstance.post('/candidatos', payload);
+      const response = await this.axiosInstance.post('/candidatos/crearcandidato', payload);
       return response.data;
     } catch (error) {
       console.error('Error al crear candidato:', error);
@@ -87,7 +107,7 @@ class ReclutamientoService {
   async actualizarCandidato(id, datosActualizados, auditor) {
     try {
       const payload = { ...datosActualizados, auditor };
-      const response = await this.axiosInstance.put(`/candidatos/${id}`, payload);
+      const response = await this.axiosInstance.put(`/candidatos/actualizar/${id}`, payload);
       return response.data;
     } catch (error) {
       console.error('Error al actualizar candidato:', error);
@@ -97,7 +117,7 @@ class ReclutamientoService {
 
   async eliminarCandidato(id, auditor) {
     try {
-      await this.axiosInstance.delete(`/candidatos/${id}`, {
+      await this.axiosInstance.delete(`/candidatos/eliminar/${id}`, {
         data: { auditor }
       });
     } catch (error) {
@@ -109,7 +129,7 @@ class ReclutamientoService {
   // --- Aplicaciones ---
   async obtenerAplicaciones() {
     try {
-      const response = await this.axiosInstance.get('/aplicaciones');
+      const response = await this.axiosInstance.get('/aplicaciones/obtener-aplicaciones');
       return response.data;
     } catch (error) {
       console.error('Error al obtener aplicaciones:', error);
@@ -117,10 +137,20 @@ class ReclutamientoService {
     }
   }
 
+  async obtenerAplicacionPorId(id) {
+    try {
+      const response = await this.axiosInstance.get(`/aplicaciones/obtener/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Error al obtener la aplicacion con ID ${id}:`, error);
+      throw error;
+    }
+  }
+
   async crearAplicacion(datosAplicacion, auditor) {
     try {
       const payload = { ...datosAplicacion, auditor };
-      const response = await this.axiosInstance.post('/aplicaciones', payload);
+      const response = await this.axiosInstance.post('/aplicaciones/crearaplicacion', payload);
       return response.data;
     } catch (error) {
       console.error('Error al crear aplicación:', error);
@@ -131,7 +161,7 @@ class ReclutamientoService {
   async actualizarAplicacion(id, datosActualizados, auditor) {
     try {
       const payload = { ...datosActualizados, auditor };
-      const response = await this.axiosInstance.put(`/aplicaciones/${id}`, payload);
+      const response = await this.axiosInstance.put(`/aplicaciones/actualizar/${id}`, payload);
       return response.data;
     } catch (error) {
       console.error('Error al actualizar aplicación:', error);
@@ -141,7 +171,7 @@ class ReclutamientoService {
 
   async eliminarAplicacion(id, auditor) {
     try {
-      await this.axiosInstance.delete(`/aplicaciones/${id}`, {
+      await this.axiosInstance.delete(`/aplicaciones/eliminar/${id}`, {
         data: { auditor }
       });
     } catch (error) {
@@ -153,7 +183,7 @@ class ReclutamientoService {
   // --- Criterios ---
   async obtenerCriterios() {
     try {
-      const response = await this.axiosInstance.get('/criterios');
+      const response = await this.axiosInstance.get('/criterios/obtenercriterios');
       return response.data;
     } catch (error) {
       console.error('Error al obtener criterios:', error);
@@ -161,10 +191,20 @@ class ReclutamientoService {
     }
   }
 
+  async obtenerCriterioPorId(id) {
+    try {
+      const response = await this.axiosInstance.get(`/criterios/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Error al obtener el criterio con ID ${id}:`, error);
+      throw error;
+    }
+  }
+
   async crearCriterio(datosCriterio, auditor) {
     try {
       const payload = { ...datosCriterio, auditor };
-      const response = await this.axiosInstance.post('/criterios', payload);
+      const response = await this.axiosInstance.post('/criterios/crearcriterio', payload);
       return response.data;
     } catch (error) {
       console.error('Error al crear criterio:', error);
@@ -197,7 +237,7 @@ class ReclutamientoService {
     // --- Evaluaciones ---
   async obtenerEvaluaciones() {
     try {
-      const response = await this.axiosInstance.get('/evaluaciones');
+      const response = await this.axiosInstance.get('/evaluaciones/obtenerevaluaciones');
       return response.data;
     } catch (error) {
       console.error('Error al obtener evaluaciones:', error);
@@ -205,10 +245,20 @@ class ReclutamientoService {
     }
   }
 
+  async obtenerEvaluacionPorId(id) {
+    try {
+      const response = await this.axiosInstance.get(`/evaluaciones/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Error al obtener la evaluacion con ID ${id}:`, error);
+      throw error;
+    }
+  }
+
   async crearEvaluacion(datosEvaluacion, auditor) {
     try {
       const payload = { ...datosEvaluacion, auditor };
-      const response = await this.axiosInstance.post('/evaluaciones', payload);
+      const response = await this.axiosInstance.post('/evaluaciones/crearevaluacion', payload);
       return response.data;
     } catch (error) {
       console.error('Error al crear evaluación:', error);
@@ -241,7 +291,7 @@ class ReclutamientoService {
   // --- Detalles de Evaluación ---
   async obtenerDetallesEvaluacion() {
     try {
-      const response = await this.axiosInstance.get('/detalles_evaluacion');
+      const response = await this.axiosInstance.get('/detalles-evaluacion/obtenerdetalleevaluacion');
       return response.data;
     } catch (error) {
       console.error('Error al obtener detalles de evaluación:', error);
@@ -249,10 +299,20 @@ class ReclutamientoService {
     }
   }
 
+  async obtenerDetalleEvaluacionPorId(id) {
+    try {
+      const response = await this.axiosInstance.get(`/detalles-evaluacion/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Error al obtener el detalle de evaluacion con ID ${id}:`, error);
+      throw error;
+    }
+  }
+
   async crearDetalleEvaluacion(datosDetalleEvaluacion, auditor) {
     try {
       const payload = { ...datosDetalleEvaluacion, auditor };
-      const response = await this.axiosInstance.post('/detalles_evaluacion', payload);
+      const response = await this.axiosInstance.post('/detalles-evaluacion/creardetalleevaluacion', payload);
       return response.data;
     } catch (error) {
       console.error('Error al crear detalle de evaluación:', error);
@@ -263,7 +323,7 @@ class ReclutamientoService {
   async actualizarDetalleEvaluacion(id, datosActualizados, auditor) {
     try {
       const payload = { ...datosActualizados, auditor };
-      const response = await this.axiosInstance.put(`/detalles_evaluacion/${id}`, payload);
+      const response = await this.axiosInstance.put(`/detalles-evaluacion/${id}`, payload);
       return response.data;
     } catch (error) {
       console.error('Error al actualizar detalle de evaluación:', error);
@@ -273,7 +333,7 @@ class ReclutamientoService {
 
   async eliminarDetalleEvaluacion(id, auditor) {
     try {
-      await this.axiosInstance.delete(`/detalles_evaluacion/${id}`, {
+      await this.axiosInstance.delete(`/detalles-evaluacion/${id}`, {
         data: { auditor }
       });
     } catch (error) {
