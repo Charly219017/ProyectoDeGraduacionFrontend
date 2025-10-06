@@ -14,7 +14,7 @@
         <tbody>
           <tr v-for="(log, index) in auditoria" :key="index">
             <td>{{ obtenerUsuario(log) }}</td>
-            <td>{{ log.accion }}</td>
+            <td><span :class="['accion-badge', `accion-${log.accion.toLowerCase()}`]">{{ log.accion }}</span></td>
             <td>{{ new Date(log.fecha).toLocaleString() }}</td>
             <td>{{ obtenerDescripcion(log) }}</td>
           </tr>
@@ -28,7 +28,6 @@
 </template>
 
 <script setup>
-import { defineProps } from 'vue';
 
 const props = defineProps({
   auditoria: {
@@ -38,33 +37,43 @@ const props = defineProps({
 });
 
 /**
- * Función para parsear el campo de descripción y obtener el nombre del usuario
- * que realizó la acción.
+ * Obtiene el identificador del usuario que realizó la acción.
+ * El backend ahora envía el nombre del usuario directamente.
  * @param {Object} log - El objeto de log de auditoría.
- * @returns {string} El nombre del usuario o una cadena vacía si no se puede parsear.
+ * @returns {string} El nombre del usuario o un ID de respaldo.
  */
 const obtenerUsuario = (log) => {
-  try {
-    const detalles = JSON.parse(log.descripcion);
-    return detalles.realizado_por?.nombre || `Usuario ID: ${log.usuario}`;
-  } catch (e) {
-    // Si la descripción no es un JSON, se usa la información del log directamente.
-    return `Usuario ID: ${log.usuario}`;
-  }
+  // Asumiendo que el backend ahora une la tabla de usuarios y envía el nombre.
+  // Si 'log.nombre_usuario' no existe, muestra el ID como respaldo.
+  return log.nombre_usuario || `ID: ${log.usuario || 'Sistema'}`;
 };
 
 /**
- * Función para parsear el campo de descripción y obtener el mensaje de log.
+ * Devuelve la descripción del log.
+ * Aprovecha los campos del trigger para dar más detalle en los UPDATES.
  * @param {Object} log - El objeto de log de auditoría.
- * @returns {string} El mensaje de log o la descripción original si no se puede parsear.
+ * @returns {string} La descripción de la acción.
  */
 const obtenerDescripcion = (log) => {
-  try {
-    const detalles = JSON.parse(log.descripcion);
-    return detalles.mensaje || log.descripcion;
-  } catch (e) {
-    return log.descripcion;
+  // Si es un UPDATE, construye la descripción a partir de los campos individuales.
+  if (log.accion === 'UPDATE' && log.campo_modificado) {
+    return `Campo '${log.campo_modificado}' cambió de '${log.valor_anterior || 'vacío'}' a '${log.valor_nuevo || 'vacío'}'`;
   }
+  
+  // Para otros tipos de logs (login, etc.), intenta parsear el JSON.
+  // Esto mantiene la compatibilidad con logs que guardan la descripción como JSON.
+  if (log.descripcion && log.descripcion.startsWith('{')) {
+    try {
+      const detalles = JSON.parse(log.descripcion);
+      return detalles.mensaje || log.descripcion;
+    } catch (e) {
+      // Si falla el parseo, devuelve la descripción original.
+      return log.descripcion;
+    }
+  }
+  
+  // Para logs de INSERT/DELETE de los triggers, que tienen descripciones simples.
+  return log.descripcion;
 };
 </script>
 
@@ -133,4 +142,27 @@ const obtenerDescripcion = (log) => {
   padding: 32px 0 0 0;
   font-size: 16px;
 }
+
+.accion-badge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-weight: 500;
+  font-size: 12px;
+  color: white;
+  text-transform: uppercase;
+}
+
+.accion-insert {
+  background-color: #3100f6; /* Azul (anteriormente verde) */
+}
+
+.accion-update {
+  background-color: #fbbf24; /* Ámbar */
+}
+
+.accion-delete {
+  background-color: #f87171; /* Rojo */
+}
+
+
 </style>

@@ -106,7 +106,12 @@ const abrirFormulario = (modo, usuario = null) => {
       estadousuario: true
     };
   } else {
-    formulario.value = { ...usuario, contrasena: '' };
+    // CORRECCIÓN: Mapeamos el campo 'activo' del backend al 'estadousuario' que espera el formulario.
+    formulario.value = {
+      ...usuario,
+      estadousuario: usuario.activo, // Aquí está la clave
+      contrasena: '' 
+    };
   }
   mostrarModal.value = true;
 };
