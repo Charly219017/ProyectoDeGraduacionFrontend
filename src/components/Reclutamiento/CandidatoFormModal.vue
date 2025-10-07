@@ -4,57 +4,79 @@
     <div class="modal-content">
       <h2 class="text-2xl font-bold mb-4">{{ modo === 'crear' ? 'Crear Nuevo Candidato' : 'Editar Candidato' }}</h2>
       <form @submit.prevent="handleSubmit">
+        
+        <!-- Nombre Completo -->
         <div class="form-group">
           <label for="nombre_completo">Nombre Completo</label>
           <input 
             type="text" 
             id="nombre_completo" 
             v-model="formularioLocal.nombre_completo" 
-            required 
+            @blur="validate('nombre_completo')"
+            :class="{ 'input-error': errors.nombre_completo }"
             class="w-full px-3 py-2 border rounded-md"
+            maxlength="100"
           >
+          <p v-if="errors.nombre_completo" class="error-text">{{ errors.nombre_completo }}</p>
         </div>
+
+        <!-- Correo Electrónico -->
         <div class="form-group">
           <label for="correo">Correo Electrónico</label>
           <input 
             type="email" 
             id="correo" 
             v-model="formularioLocal.correo" 
-            required 
+            @blur="validate('correo')"
+            :class="{ 'input-error': errors.correo }"
             class="w-full px-3 py-2 border rounded-md"
+            maxlength="100"
           >
+          <p v-if="errors.correo" class="error-text">{{ errors.correo }}</p>
         </div>
+
+        <!-- Teléfono -->
         <div class="form-group">
           <label for="telefono">Teléfono</label>
           <input 
             type="tel" 
             id="telefono" 
-            v-model="formularioLocal.telefono" 
+            v-model="formularioLocal.telefono"
+            @blur="validate('telefono')"
+            :class="{ 'input-error': errors.telefono }"
             class="w-full px-3 py-2 border rounded-md"
+            maxlength="20"
           >
+          <p v-if="errors.telefono" class="error-text">{{ errors.telefono }}</p>
         </div>
+
+        <!-- URL del CV -->
         <div class="form-group">
-          <label for="cv_url">URL del CV</label>
+          <label for="cv_url">URL del CV (Opcional)</label>
           <input 
             type="url" 
             id="cv_url" 
-            v-model="formularioLocal.cv_url" 
+            v-model="formularioLocal.cv_url"
+            @blur="validate('cv_url')"
+            :class="{ 'input-error': errors.cv_url }"
             class="w-full px-3 py-2 border rounded-md"
           >
+          <p v-if="errors.cv_url" class="error-text">{{ errors.cv_url }}</p>
         </div>
+
+        <!-- Fecha de Aplicación -->
         <div class="form-group">
           <label for="fecha_aplicacion">Fecha de Aplicación</label>
           <input 
             type="date" 
             id="fecha_aplicacion" 
-            v-model="formularioLocal.fecha_aplicacion" 
-            required
+            v-model="formularioLocal.fecha_aplicacion"
+            :class="{ 'input-error': errors.fecha_aplicacion }"
             class="w-full px-3 py-2 border rounded-md"
           >
+           <p v-if="errors.fecha_aplicacion" class="error-text">{{ errors.fecha_aplicacion }}</p>
         </div>
-        <div v-if="errorFormulario" class="error-message">
-          {{ errorFormulario }}
-        </div>
+
         <div class="form-actions">
           <button 
             type="submit" 
@@ -79,36 +101,73 @@
 import { ref, watch } from 'vue';
 
 const props = defineProps({
-  mostrar: {
-    type: Boolean,
-    required: true,
-  },
-  modo: {
-    type: String,
-    required: true,
-  },
-  candidatoData: {
-    type: Object,
-    default: () => ({})
-  }
+  mostrar: { type: Boolean, required: true },
+  modo: { type: String, required: true },
+  candidatoData: { type: Object, default: () => ({}) }
 });
 
 const emit = defineEmits(['cerrar', 'guardar']);
 
 const formularioLocal = ref({});
-const errorFormulario = ref(null);
+const errors = ref({});
 
 watch(() => props.candidatoData, (newData) => {
   formularioLocal.value = { ...newData };
+  errors.value = {}; // Limpiar errores al cambiar de candidato
 }, { deep: true, immediate: true });
 
-const handleSubmit = () => {
-  if (!formularioLocal.value.nombre_completo || !formularioLocal.value.correo) {
-    errorFormulario.value = 'Por favor, completa todos los campos obligatorios.';
-    return;
+const validate = (field) => {
+  const value = formularioLocal.value[field];
+  errors.value[field] = null;
+
+  switch (field) {
+    case 'nombre_completo':
+      if (props.modo === 'crear' && !value) {
+        errors.value[field] = 'El nombre es obligatorio.';
+      } else if (value && (value.length < 2 || value.length > 100)) {
+        errors.value[field] = 'El nombre debe tener entre 2 y 100 caracteres.';
+      }
+      break;
+    case 'correo':
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (props.modo === 'crear' && !value) {
+        errors.value[field] = 'El correo es obligatorio.';
+      } else if (value && !emailRegex.test(value)) {
+        errors.value[field] = 'Por favor, introduce un correo válido.';
+      } else if (value && value.length > 100) {
+        errors.value[field] = 'El correo no puede exceder los 100 caracteres.';
+      }
+      break;
+    case 'telefono':
+      if (value && value.length > 20) {
+        errors.value[field] = 'El teléfono no puede exceder los 20 caracteres.';
+      }
+      break;
+    case 'cv_url':
+      try {
+        if (value) new URL(value);
+      } catch (_) {
+        errors.value[field] = 'Por favor, introduce una URL válida.';
+      }
+      break;
+    case 'fecha_aplicacion':
+        if(!value){
+            errors.value[field] = 'La fecha de aplicación es obligatoria';
+        }
   }
-  emit('guardar', formularioLocal.value, props.modo);
-  errorFormulario.value = null;
+  return !errors.value[field];
+};
+
+const validateAll = () => {
+  const fields = ['nombre_completo', 'correo', 'telefono', 'cv_url', 'fecha_aplicacion'];
+  fields.forEach(field => validate(field));
+  return Object.values(errors.value).every(error => !error);
+};
+
+const handleSubmit = () => {
+  if (validateAll()) {
+    emit('guardar', formularioLocal.value, props.modo);
+  }
 };
 </script>
 
@@ -162,7 +221,7 @@ h2 {
   color: #4b5563;
 }
 
-input, textarea, select {
+input {
   width: 100%;
   padding: 10px 14px;
   border: 1px solid #e2e8f0;
@@ -174,9 +233,23 @@ input, textarea, select {
   outline: none;
 }
 
-input:focus, textarea:focus, select:focus {
+input:focus {
   border-color: #667eea;
   background: #fff;
+}
+
+.input-error {
+  border-color: #ef4444;
+}
+
+.input-error:focus {
+  border-color: #ef4444;
+}
+
+.error-text {
+  color: #ef4444;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
 }
 
 .form-actions {
@@ -212,16 +285,5 @@ input:focus, textarea:focus, select:focus {
 
 .form-actions .bg-gray-400:hover {
   background: #cbd5e1;
-}
-
-.error-message {
-  background: #fef2f2;
-  color: #ef4444;
-  padding: 0.75rem;
-  border-radius: 0.5rem;
-  margin-bottom: 1rem;
-  border: 1px solid #fca5a5;
-  text-align: center;
-  font-weight: 500;
 }
 </style>

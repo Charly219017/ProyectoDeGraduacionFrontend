@@ -1,4 +1,3 @@
-
 // frontend/src/vistas/ReclutamientoVacantes.vue
 <template>
   <div class="reclutamiento-vacantes-container">
@@ -48,7 +47,7 @@ const modoFormulario = ref('crear');
 const authStore = useAuthStore();
 const formulario = ref({
   id_vacante: null,
-  nombre_vacante: '',
+  titulo: '',
   descripcion: '',
   id_puesto: null,
   fecha_publicacion: ''
@@ -75,7 +74,7 @@ const abrirFormulario = (modo, vacante = null) => {
   if (modo === 'crear') {
     formulario.value = {
       id_vacante: null,
-      nombre_vacante: '',
+      titulo: '',
       descripcion: '',
       id_puesto: null,
       fecha_publicacion: ''
@@ -91,12 +90,11 @@ const cerrarModal = () => {
 };
 
 const guardarVacante = async (datosVacante, modo) => {
-  const usuarioActualId = authStore.usuario?.id_usuario;
   try {
     if (modo === 'crear') {
-      await ReclutamientoService.crearVacante(datosVacante, usuarioActualId);
+      await ReclutamientoService.crearVacante(datosVacante);
     } else {
-      await ReclutamientoService.actualizarVacante(datosVacante.id_vacante, datosVacante, usuarioActualId);
+      await ReclutamientoService.actualizarVacante(datosVacante.id_vacante, datosVacante);
     }
     await obtenerDatos();
     cerrarModal();
@@ -105,11 +103,10 @@ const guardarVacante = async (datosVacante, modo) => {
   }
 };
 
-const eliminarVacante = async (id) => {
+const eliminarVacante = async (id_vacante) => {
   if (window.confirm('¿Estás seguro de que deseas eliminar esta vacante?')) {
-    const usuarioActualId = authStore.usuario?.id_usuario;
     try {
-      await ReclutamientoService.eliminarVacante(id, usuarioActualId);
+      await ReclutamientoService.eliminarVacante(id_vacante);
       await obtenerDatos();
     } catch (error) {
       window.alert(`Error al eliminar la vacante: ${error.message}`);

@@ -4,73 +4,83 @@
     <div class="modal-content">
       <h2 class="text-2xl font-bold mb-4">{{ modo === 'crear' ? 'Crear Nueva Evaluación' : 'Editar Evaluación' }}</h2>
       <form @submit.prevent="handleSubmit">
+
+        <!-- Empleado -->
         <div class="form-group">
           <label for="id_empleado">Empleado</label>
           <select 
             id="id_empleado" 
             v-model="formularioLocal.id_empleado" 
-            required
+            @blur="validate('id_empleado')"
+            :class="{ 'input-error': errors.id_empleado }"
             class="w-full px-3 py-2 border rounded-md"
           >
-            <option v-for="empleado in empleados" :key="empleado.id_empleado" :value="empleado.id_empleado">{{ empleado.nombre_completo }}</option>
+            <option :value="null">Seleccione un empleado</option>
+            <option v-for="empleado in empleados" :key="empleado.id_empleado" :value="empleado.id_empleado">
+              {{ empleado.nombre_completo }}
+            </option>
           </select>
+          <p v-if="errors.id_empleado" class="error-text">{{ errors.id_empleado }}</p>
         </div>
+
+        <!-- Fecha de Evaluación -->
         <div class="form-group">
           <label for="fecha_evaluacion">Fecha de Evaluación</label>
           <input 
             type="date" 
             id="fecha_evaluacion" 
-            v-model="formularioLocal.fecha_evaluacion" 
-            required 
+            v-model="formularioLocal.fecha_evaluacion"
+            @blur="validate('fecha_evaluacion')"
+            :class="{ 'input-error': errors.fecha_evaluacion }"
             class="w-full px-3 py-2 border rounded-md"
           >
+          <p v-if="errors.fecha_evaluacion" class="error-text">{{ errors.fecha_evaluacion }}</p>
         </div>
+
+        <!-- Evaluador -->
         <div class="form-group">
           <label for="evaluador">Evaluador</label>
           <input 
             type="text" 
             id="evaluador" 
-            v-model="formularioLocal.evaluador" 
-            required 
+            v-model="formularioLocal.evaluador"
+            @blur="validate('evaluador')"
+            :class="{ 'input-error': errors.evaluador }"
             class="w-full px-3 py-2 border rounded-md"
+            maxlength="100"
           >
+          <p v-if="errors.evaluador" class="error-text">{{ errors.evaluador }}</p>
         </div>
+
+        <!-- Puntuación Total -->
         <div class="form-group">
-          <label for="puntuacion_total">Puntuación Total</label>
+          <label for="puntuacion_total">Puntuación Total (0.00 - 100.00)</label>
           <input 
             type="number" 
+            step="0.01"
             id="puntuacion_total" 
-            v-model="formularioLocal.puntuacion_total" 
-            required 
+            v-model="formularioLocal.puntuacion_total"
+            @blur="validate('puntuacion_total')"
+            :class="{ 'input-error': errors.puntuacion_total }"
             class="w-full px-3 py-2 border rounded-md"
           >
+          <p v-if="errors.puntuacion_total" class="error-text">{{ errors.puntuacion_total }}</p>
         </div>
+
+        <!-- Comentarios -->
         <div class="form-group">
           <label for="comentarios">Comentarios</label>
           <textarea 
             id="comentarios" 
             v-model="formularioLocal.comentarios" 
-            rows="4"
+            rows="3"
             class="w-full px-3 py-2 border rounded-md"
           ></textarea>
         </div>
-        <div v-if="errorFormulario" class="error-message">
-          {{ errorFormulario }}
-        </div>
+
         <div class="form-actions">
-          <button 
-            type="submit" 
-            class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg mr-2"
-          >
-            Guardar
-          </button>
-          <button 
-            @click="$emit('cerrar')" 
-            type="button" 
-            class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg"
-          >
-            Cancelar
-          </button>
+          <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg mr-2">Guardar</button>
+          <button @click="$emit('cerrar')" type="button" class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg">Cancelar</button>
         </div>
       </form>
     </div>
@@ -81,154 +91,99 @@
 import { ref, watch } from 'vue';
 
 const props = defineProps({
-  mostrar: {
-    type: Boolean,
-    required: true,
-  },
-  modo: {
-    type: String,
-    required: true,
-  },
-  evaluacionData: {
-    type: Object,
-    default: () => ({})
-  },
-  empleados: {
-    type: Array,
-    required: true
-  }
+  mostrar: { type: Boolean, required: true },
+  modo: { type: String, required: true },
+  evaluacionData: { type: Object, default: () => ({}) },
+  empleados: { type: Array, required: true }
 });
 
 const emit = defineEmits(['cerrar', 'guardar']);
 
 const formularioLocal = ref({});
-const errorFormulario = ref(null);
+const errors = ref({});
 
 watch(() => props.evaluacionData, (newData) => {
   formularioLocal.value = { ...newData };
-  if (formularioLocal.value.fecha_evaluacion) {
-    formularioLocal.value.fecha_evaluacion = formularioLocal.value.fecha_evaluacion.split('T')[0];
-  }
+  errors.value = {};
 }, { deep: true, immediate: true });
 
-const handleSubmit = () => {
-  if (!formularioLocal.value.id_empleado || !formularioLocal.value.fecha_evaluacion || !formularioLocal.value.evaluador || !formularioLocal.value.puntuacion_total) {
-    errorFormulario.value = 'Por favor, completa todos los campos obligatorios.';
-    return;
+const validate = (field) => {
+  const value = formularioLocal.value[field];
+  errors.value[field] = null;
+
+  switch (field) {
+    case 'id_empleado':
+      if (props.modo === 'crear' && (!value || value <= 0)) {
+        errors.value[field] = 'Debe seleccionar un empleado.';
+      }
+      break;
+    case 'fecha_evaluacion':
+      if (!value) {
+        errors.value[field] = 'La fecha de evaluación es obligatoria.';
+      }
+      break;
+    case 'evaluador':
+      if (value && value.length > 100) {
+        errors.value[field] = 'El nombre del evaluador no puede exceder los 100 caracteres.';
+      }
+      break;
+    case 'puntuacion_total':
+      if (value !== null && value !== '' && (isNaN(parseFloat(value)) || parseFloat(value) < 0 || parseFloat(value) > 100)) {
+        errors.value[field] = 'La puntuación debe ser un número entre 0 y 100.';
+      }
+      break;
   }
-  emit('guardar', formularioLocal.value, props.modo);
-  errorFormulario.value = null;
+  return !errors.value[field];
+};
+
+const validateAll = () => {
+  const fields = ['id_empleado', 'fecha_evaluacion', 'evaluador', 'puntuacion_total'];
+  fields.forEach(field => validate(field));
+  return Object.values(errors.value).every(error => !error);
+};
+
+const handleSubmit = () => {
+  if (validateAll()) {
+    emit('guardar', formularioLocal.value, props.modo);
+  }
 };
 </script>
 
 <style scoped>
+/* Estilos generales del modal (overlay, content, etc.) */
 .modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(102, 126, 234, 0.15);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 100;
+  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(102, 126, 234, 0.15); display: flex; justify-content: center; align-items: center; z-index: 100;
 }
+.modal-content { 
+  background: white; border-radius: 16px; box-shadow: 0 4px 16px rgba(102, 126, 234, 0.10), 0 1.5px 4px rgba(0,0,0,0.06);
+  padding: 32px 24px; width: 100%; max-width: 500px; animation: modalIn 0.2s; max-height: 90vh; overflow-y: auto;
+}
+@keyframes modalIn { from { transform: translateY(40px) scale(0.98); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
 
-.modal-content {
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.10), 0 1.5px 4px rgba(0,0,0,0.06);
-  padding: 32px 24px;
-  width: 100%;
-  max-width: 500px;
-  animation: modalIn 0.2s;
+/* Estilos del formulario */
+h2 { color: #333; font-size: 24px; font-weight: 600; margin-bottom: 24px; text-align: center; }
+.form-group { margin-bottom: 1rem; }
+.form-group label { display: block; font-weight: 600; margin-bottom: 0.5rem; color: #4b5563; }
+input, select, textarea { 
+  width: 100%; padding: 10px 14px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 15px;
+  color: #333; background: #f9fafb; transition: border 0.2s; outline: none;
 }
+input:focus, select:focus, textarea:focus { border-color: #667eea; background: #fff; }
 
-@keyframes modalIn {
-  from { transform: translateY(40px) scale(0.98); opacity: 0; }
-  to { transform: translateY(0) scale(1); opacity: 1; }
-}
+/* Estilos de validación */
+.input-error { border-color: #ef4444; }
+.input-error:focus { border-color: #ef4444; }
+.error-text { color: #ef4444; font-size: 0.875rem; margin-top: 0.25rem; }
 
-h2 {
-  color: #333;
-  font-size: 24px;
-  font-weight: 600;
-  margin-bottom: 24px;
-  text-align: center;
+/* Estilos de los botones */
+.form-actions { display: flex; justify-content: flex-end; margin-top: 1.5rem; }
+.form-actions button { 
+  border: none; border-radius: 8px; padding: 10px 24px; font-size: 15px; font-weight: 600;
+  cursor: pointer; margin-left: 8px; transition: background 0.2s, box-shadow 0.2s;
 }
-
-.form-group {
-  margin-bottom: 1rem;
-}
-
-.form-group label {
-  display: block;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  color: #4b5563;
-}
-
-input, textarea, select {
-  width: 100%;
-  padding: 10px 14px;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  font-size: 15px;
-  color: #333;
-  background: #f9fafb;
-  transition: border 0.2s;
-  outline: none;
-}
-
-input:focus, textarea:focus, select:focus {
-  border-color: #667eea;
-  background: #fff;
-}
-
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 1.5rem;
-}
-
-.form-actions button {
-  border: none;
-  border-radius: 8px;
-  padding: 10px 24px;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  margin-left: 8px;
-  transition: background 0.2s, box-shadow 0.2s;
-}
-
-.form-actions .bg-green-600 {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-}
-
-.form-actions .bg-green-600:hover {
-  background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
-}
-
-.form-actions .bg-gray-400 {
-  background: #e2e8f0;
-  color: #333;
-}
-
-.form-actions .bg-gray-400:hover {
-  background: #cbd5e1;
-}
-
-.error-message {
-  background: #fef2f2;
-  color: #ef4444;
-  padding: 0.75rem;
-  border-radius: 0.5rem;
-  margin-bottom: 1rem;
-  border: 1px solid #fca5a5;
-  text-align: center;
-  font-weight: 500;
-}
+.form-actions .bg-green-600 { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+.form-actions .bg-green-600:hover { background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%); }
+.form-actions .bg-gray-400 { background: #e2e8f0; color: #333; }
+.form-actions .bg-gray-400:hover { background: #cbd5e1; }
 </style>

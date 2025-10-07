@@ -29,20 +29,19 @@ class ReclutamientoService {
     }
   }
 
-  async obtenerVacantePorId(id) {
+  async obtenerVacantePorId(id_vacante) {
     try {
-      const response = await this.axiosInstance.get(`/vacantes/${id}`);
+      const response = await this.axiosInstance.get(`/vacantes/${id_vacante}`);
       return response.data;
     } catch (error) {
-      console.error(`Error al obtener la vacante con ID ${id}:`, error);
+      console.error(`Error al obtener la vacante con ID ${id_vacante}:`, error);
       throw error;
     }
   }
 
-  async crearVacante(datosVacante, auditor) {
+  async crearVacante(datosVacante) {
     try {
-      const payload = { ...datosVacante, auditor };
-      const response = await this.axiosInstance.post('/vacantes/crearvacantes', payload);
+      const response = await this.axiosInstance.post('/vacantes/crearvacantes', datosVacante);
       return response.data;
     } catch (error) {
       console.error('Error al crear vacante:', error);
@@ -50,10 +49,9 @@ class ReclutamientoService {
     }
   }
 
-  async actualizarVacante(id, datosActualizados, auditor) {
+  async actualizarVacante(id_vacante, datosActualizados) {
     try {
-      const payload = { ...datosActualizados, auditor };
-      const response = await this.axiosInstance.put(`/vacantes/${id}`, payload);
+      const response = await this.axiosInstance.put(`/vacantes/${id_vacante}`, datosActualizados);
       return response.data;
     } catch (error) {
       console.error('Error al actualizar vacante:', error);
@@ -61,11 +59,9 @@ class ReclutamientoService {
     }
   }
 
-  async eliminarVacante(id, auditor) {
+  async eliminarVacante(id_vacante) {
     try {
-      await this.axiosInstance.delete(`/vacantes/${id}`, {
-        data: { auditor }
-      });
+      await this.axiosInstance.delete(`/vacantes/${id_vacante}`);
     } catch (error) {
       console.error('Error al eliminar vacante:', error);
       throw error;
@@ -83,20 +79,19 @@ class ReclutamientoService {
     }
   }
 
-  async obtenerCandidatoPorId(id) {
+  async obtenerCandidatoPorId(id_candidato) {
     try {
-      const response = await this.axiosInstance.get(`/candidatos/obtener/${id}`);
+      const response = await this.axiosInstance.get(`/candidatos/obtener/${id_candidato}`);
       return response.data;
     } catch (error) {
-      console.error(`Error al obtener el candidato con ID ${id}:`, error);
+      console.error(`Error al obtener el candidato con ID ${id_candidato}:`, error);
       throw error;
     }
   }
 
-  async crearCandidato(datosCandidato, auditor) {
+  async crearCandidato(datosCandidato) {
     try {
-      const payload = { ...datosCandidato, auditor };
-      const response = await this.axiosInstance.post('/candidatos/crearcandidato', payload);
+      const response = await this.axiosInstance.post('/candidatos/crearcandidato', datosCandidato);
       return response.data;
     } catch (error) {
       console.error('Error al crear candidato:', error);
@@ -104,10 +99,9 @@ class ReclutamientoService {
     }
   }
 
-  async actualizarCandidato(id, datosActualizados, auditor) {
+  async actualizarCandidato(id_candidato, datosActualizados) {
     try {
-      const payload = { ...datosActualizados, auditor };
-      const response = await this.axiosInstance.put(`/candidatos/actualizar/${id}`, payload);
+      const response = await this.axiosInstance.put(`/candidatos/actualizar/${id_candidato}`, datosActualizados);
       return response.data;
     } catch (error) {
       console.error('Error al actualizar candidato:', error);
@@ -115,11 +109,9 @@ class ReclutamientoService {
     }
   }
 
-  async eliminarCandidato(id, auditor) {
+  async eliminarCandidato(id_candidato) {
     try {
-      await this.axiosInstance.delete(`/candidatos/eliminar/${id}`, {
-        data: { auditor }
-      });
+      await this.axiosInstance.delete(`/candidatos/eliminar/${id_candidato}`);
     } catch (error) {
       console.error('Error al eliminar candidato:', error);
       throw error;
@@ -137,20 +129,19 @@ class ReclutamientoService {
     }
   }
 
-  async obtenerAplicacionPorId(id) {
+  async obtenerAplicacionPorId(id_aplicacion) {
     try {
-      const response = await this.axiosInstance.get(`/aplicaciones/obtener/${id}`);
+      const response = await this.axiosInstance.get(`/aplicaciones/obtener/${id_aplicacion}`);
       return response.data;
     } catch (error) {
-      console.error(`Error al obtener la aplicacion con ID ${id}:`, error);
+      console.error(`Error al obtener la aplicacion con ID ${id_aplicacion}:`, error);
       throw error;
     }
   }
 
-  async crearAplicacion(datosAplicacion, auditor) {
+  async crearAplicacion(datosAplicacion) {
     try {
-      const payload = { ...datosAplicacion, auditor };
-      const response = await this.axiosInstance.post('/aplicaciones/crearaplicacion', payload);
+      const response = await this.axiosInstance.post('/aplicaciones/crearaplicacion', datosAplicacion);
       return response.data;
     } catch (error) {
       console.error('Error al crear aplicación:', error);
@@ -158,10 +149,9 @@ class ReclutamientoService {
     }
   }
 
-  async actualizarAplicacion(id, datosActualizados, auditor) {
+  async actualizarAplicacion(id_aplicacion, datosActualizados) {
     try {
-      const payload = { ...datosActualizados, auditor };
-      const response = await this.axiosInstance.put(`/aplicaciones/actualizar/${id}`, payload);
+      const response = await this.axiosInstance.put(`/aplicaciones/actualizar/${id_aplicacion}`, datosActualizados);
       return response.data;
     } catch (error) {
       console.error('Error al actualizar aplicación:', error);
@@ -169,11 +159,9 @@ class ReclutamientoService {
     }
   }
 
-  async eliminarAplicacion(id, auditor) {
+  async eliminarAplicacion(id_aplicacion) {
     try {
-      await this.axiosInstance.delete(`/aplicaciones/eliminar/${id}`, {
-        data: { auditor }
-      });
+      await this.axiosInstance.delete(`/aplicaciones/eliminar/${id_aplicacion}`);
     } catch (error) {
       console.error('Error al eliminar aplicación:', error);
       throw error;
@@ -191,20 +179,19 @@ class ReclutamientoService {
     }
   }
 
-  async obtenerCriterioPorId(id) {
+  async obtenerCriterioPorId(id_criterio) {
     try {
-      const response = await this.axiosInstance.get(`/criterios/${id}`);
+      const response = await this.axiosInstance.get(`/criterios/${id_criterio}`);
       return response.data;
     } catch (error) {
-      console.error(`Error al obtener el criterio con ID ${id}:`, error);
+      console.error(`Error al obtener el criterio con ID ${id_criterio}:`, error);
       throw error;
     }
   }
 
-  async crearCriterio(datosCriterio, auditor) {
+  async crearCriterio(datosCriterio) {
     try {
-      const payload = { ...datosCriterio, auditor };
-      const response = await this.axiosInstance.post('/criterios/crearcriterio', payload);
+      const response = await this.axiosInstance.post('/criterios/crearcriterio', datosCriterio);
       return response.data;
     } catch (error) {
       console.error('Error al crear criterio:', error);
@@ -212,10 +199,9 @@ class ReclutamientoService {
     }
   }
 
-  async actualizarCriterio(id, datosActualizados, auditor) {
+  async actualizarCriterio(id_criterio, datosActualizados) {
     try {
-      const payload = { ...datosActualizados, auditor };
-      const response = await this.axiosInstance.put(`/criterios/${id}`, payload);
+      const response = await this.axiosInstance.put(`/criterios/${id_criterio}`, datosActualizados);
       return response.data;
     } catch (error) {
       console.error('Error al actualizar criterio:', error);
@@ -223,11 +209,9 @@ class ReclutamientoService {
     }
   }
 
-  async eliminarCriterio(id, auditor) {
+  async eliminarCriterio(id_criterio) {
     try {
-      await this.axiosInstance.delete(`/criterios/${id}`, {
-        data: { auditor }
-      });
+      await this.axiosInstance.delete(`/criterios/${id_criterio}`);
     } catch (error) {
       console.error('Error al eliminar criterio:', error);
       throw error;
@@ -245,20 +229,19 @@ class ReclutamientoService {
     }
   }
 
-  async obtenerEvaluacionPorId(id) {
+  async obtenerEvaluacionPorId(id_evaluacion) {
     try {
-      const response = await this.axiosInstance.get(`/evaluaciones/${id}`);
+      const response = await this.axiosInstance.get(`/evaluaciones/${id_evaluacion}`);
       return response.data;
     } catch (error) {
-      console.error(`Error al obtener la evaluacion con ID ${id}:`, error);
+      console.error(`Error al obtener la evaluacion con ID ${id_evaluacion}:`, error);
       throw error;
     }
   }
 
-  async crearEvaluacion(datosEvaluacion, auditor) {
+  async crearEvaluacion(datosEvaluacion) {
     try {
-      const payload = { ...datosEvaluacion, auditor };
-      const response = await this.axiosInstance.post('/evaluaciones/crearevaluacion', payload);
+      const response = await this.axiosInstance.post('/evaluaciones/crearevaluacion', datosEvaluacion);
       return response.data;
     } catch (error) {
       console.error('Error al crear evaluación:', error);
@@ -266,10 +249,9 @@ class ReclutamientoService {
     }
   }
 
-  async actualizarEvaluacion(id, datosActualizados, auditor) {
+  async actualizarEvaluacion(id_evaluacion, datosActualizados) {
     try {
-      const payload = { ...datosActualizados, auditor };
-      const response = await this.axiosInstance.put(`/evaluaciones/${id}`, payload);
+      const response = await this.axiosInstance.put(`/evaluaciones/${id_evaluacion}`, datosActualizados);
       return response.data;
     } catch (error) {
       console.error('Error al actualizar evaluación:', error);
@@ -277,11 +259,9 @@ class ReclutamientoService {
     }
   }
 
-  async eliminarEvaluacion(id, auditor) {
+  async eliminarEvaluacion(id_evaluacion) {
     try {
-      await this.axiosInstance.delete(`/evaluaciones/${id}`, {
-        data: { auditor }
-      });
+      await this.axiosInstance.delete(`/evaluaciones/${id_evaluacion}`);
     } catch (error) {
       console.error('Error al eliminar evaluación:', error);
       throw error;
@@ -289,9 +269,13 @@ class ReclutamientoService {
   }
 
   // --- Detalles de Evaluación ---
-  async obtenerDetallesEvaluacion() {
+  async obtenerDetallesEvaluacion(id_evaluacion = null) {
     try {
-      const response = await this.axiosInstance.get('/detalles-evaluacion/obtenerdetalleevaluacion');
+      const params = {};
+      if (id_evaluacion) {
+        params.id_evaluacion = id_evaluacion;
+      }
+      const response = await this.axiosInstance.get('/detalles-evaluacion/obtenerdetalleevaluacion', { params });
       return response.data;
     } catch (error) {
       console.error('Error al obtener detalles de evaluación:', error);
@@ -299,20 +283,19 @@ class ReclutamientoService {
     }
   }
 
-  async obtenerDetalleEvaluacionPorId(id) {
+  async obtenerDetalleEvaluacionPorId(id_detalle) {
     try {
-      const response = await this.axiosInstance.get(`/detalles-evaluacion/${id}`);
+      const response = await this.axiosInstance.get(`/detalles-evaluacion/${id_detalle}`);
       return response.data;
     } catch (error) {
-      console.error(`Error al obtener el detalle de evaluacion con ID ${id}:`, error);
+      console.error(`Error al obtener el detalle de evaluacion con ID ${id_detalle}:`, error);
       throw error;
     }
   }
 
-  async crearDetalleEvaluacion(datosDetalleEvaluacion, auditor) {
+  async crearDetalleEvaluacion(datosDetalleEvaluacion) {
     try {
-      const payload = { ...datosDetalleEvaluacion, auditor };
-      const response = await this.axiosInstance.post('/detalles-evaluacion/creardetalleevaluacion', payload);
+      const response = await this.axiosInstance.post('/detalles-evaluacion/creardetalleevaluacion', datosDetalleEvaluacion);
       return response.data;
     } catch (error) {
       console.error('Error al crear detalle de evaluación:', error);
@@ -320,10 +303,9 @@ class ReclutamientoService {
     }
   }
 
-  async actualizarDetalleEvaluacion(id, datosActualizados, auditor) {
+  async actualizarDetalleEvaluacion(id_detalle, datosActualizados) {
     try {
-      const payload = { ...datosActualizados, auditor };
-      const response = await this.axiosInstance.put(`/detalles-evaluacion/${id}`, payload);
+      const response = await this.axiosInstance.put(`/detalles-evaluacion/${id_detalle}`, datosActualizados);
       return response.data;
     } catch (error) {
       console.error('Error al actualizar detalle de evaluación:', error);
@@ -331,11 +313,9 @@ class ReclutamientoService {
     }
   }
 
-  async eliminarDetalleEvaluacion(id, auditor) {
+  async eliminarDetalleEvaluacion(id_detalle) {
     try {
-      await this.axiosInstance.delete(`/detalles-evaluacion/${id}`, {
-        data: { auditor }
-      });
+      await this.axiosInstance.delete(`/detalles-evaluacion/${id_detalle}`);
     } catch (error) {
       console.error('Error al eliminar detalle de evaluación:', error);
       throw error;

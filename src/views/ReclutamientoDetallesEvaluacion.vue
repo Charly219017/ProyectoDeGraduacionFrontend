@@ -1,4 +1,3 @@
-
 // frontend/src/vistas/ReclutamientoDetallesEvaluacion.vue
 <template>
   <div class="reclutamiento-detalles-evaluacion-container">
@@ -26,6 +25,7 @@
       :detalle-evaluacion-data="formulario"
       :evaluaciones="evaluaciones"
       :criterios="criterios"
+      :empleados="empleados"
       @cerrar="cerrarModal"
       @guardar="guardarDetalleEvaluacion"
     />
@@ -37,18 +37,20 @@ import { ref, onMounted } from 'vue';
 import DetallesEvaluacionTabla from '../components/Reclutamiento/DetallesEvaluacionTabla.vue';
 import DetalleEvaluacionFormModal from '../components/Reclutamiento/DetalleEvaluacionFormModal.vue';
 import ReclutamientoService from '../services/reclutamiento.js';
+import EmpleadosService from '../services/empleados.js';
 import { useAuthStore } from '../store/index.js';
 
 const detallesEvaluacion = ref([]);
 const evaluaciones = ref([]);
 const criterios = ref([]);
+const empleados = ref([]);
 const cargando = ref(true);
 const mostrarModal = ref(false);
 const modoFormulario = ref('crear');
 
 const authStore = useAuthStore();
 const formulario = ref({
-  id_detalle_evaluacion: null,
+  id_detalle: null,
   id_evaluacion: null,
   id_criterio: null,
   puntuacion: 0,
@@ -58,14 +60,16 @@ const formulario = ref({
 const obtenerDatos = async () => {
   cargando.value = true;
   try {
-    const [detallesData, evaluacionesData, criteriosData] = await Promise.all([
+    const [detallesData, evaluacionesData, criteriosData, empleadosData] = await Promise.all([
       ReclutamientoService.obtenerDetallesEvaluacion(),
       ReclutamientoService.obtenerEvaluaciones(),
-      ReclutamientoService.obtenerCriterios()
+      ReclutamientoService.obtenerCriterios(),
+      EmpleadosService.obtenerTodosEmpleados()
     ]);
     detallesEvaluacion.value = detallesData;
     evaluaciones.value = evaluacionesData;
     criterios.value = criteriosData;
+    empleados.value = empleadosData;
   } catch (error) {
     console.error('Error al obtener datos iniciales:', error);
   } finally {
@@ -77,7 +81,7 @@ const abrirFormulario = (modo, detalle = null) => {
   modoFormulario.value = modo;
   if (modo === 'crear') {
     formulario.value = {
-      id_detalle_evaluacion: null,
+      id_detalle: null,
       id_evaluacion: null,
       id_criterio: null,
       puntuacion: 0,
@@ -94,12 +98,11 @@ const cerrarModal = () => {
 };
 
 const guardarDetalleEvaluacion = async (datosDetalleEvaluacion, modo) => {
-  const usuarioActualId = authStore.usuario?.id_usuario;
   try {
     if (modo === 'crear') {
-      await ReclutamientoService.crearDetalleEvaluacion(datosDetalleEvaluacion, usuarioActualId);
+      await ReclutamientoService.crearDetalleEvaluacion(datosDetalleEvaluacion);
     } else {
-      await ReclutamientoService.actualizarDetalleEvaluacion(datosDetalleEvaluacion.id_detalle_evaluacion, datosDetalleEvaluacion, usuarioActualId);
+      await ReclutamientoService.actualizarDetalleEvaluacion(datosDetalleEvaluacion.id_detalle, datosDetalleEvaluacion);
     }
     await obtenerDatos();
     cerrarModal();
@@ -110,9 +113,8 @@ const guardarDetalleEvaluacion = async (datosDetalleEvaluacion, modo) => {
 
 const eliminarDetalleEvaluacion = async (id) => {
   if (window.confirm('¿Estás seguro de que deseas eliminar este detalle de evaluación?')) {
-    const usuarioActualId = authStore.usuario?.id_usuario;
     try {
-      await ReclutamientoService.eliminarDetalleEvaluacion(id, usuarioActualId);
+      await ReclutamientoService.eliminarDetalleEvaluacion(id);
       await obtenerDatos();
     } catch (error) {
       window.alert(`Error al eliminar el detalle de evaluación: ${error.message}`);

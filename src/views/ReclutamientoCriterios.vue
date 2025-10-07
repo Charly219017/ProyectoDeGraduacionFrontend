@@ -79,12 +79,11 @@ const cerrarModal = () => {
 };
 
 const guardarCriterio = async (datosCriterio, modo) => {
-  const usuarioActualId = authStore.usuario?.id_usuario;
   try {
     if (modo === 'crear') {
-      await ReclutamientoService.crearCriterio(datosCriterio, usuarioActualId);
+      await ReclutamientoService.crearCriterio(datosCriterio);
     } else {
-      await ReclutamientoService.actualizarCriterio(datosCriterio.id_criterio, datosCriterio, usuarioActualId);
+      await ReclutamientoService.actualizarCriterio(datosCriterio.id_criterio, datosCriterio);
     }
     await obtenerDatos();
     cerrarModal();
@@ -95,9 +94,8 @@ const guardarCriterio = async (datosCriterio, modo) => {
 
 const eliminarCriterio = async (id) => {
   if (window.confirm('¿Estás seguro de que deseas eliminar este criterio?')) {
-    const usuarioActualId = authStore.usuario?.id_usuario;
     try {
-      await ReclutamientoService.eliminarCriterio(id, usuarioActualId);
+      await ReclutamientoService.eliminarCriterio(id);
       await obtenerDatos();
     } catch (error) {
       window.alert(`Error al eliminar el criterio: ${error.message}`);

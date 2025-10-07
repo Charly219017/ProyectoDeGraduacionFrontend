@@ -1,4 +1,3 @@
-
 // frontend/src/componentes/Reclutamiento/DetallesEvaluacionTabla.vue
 <template>
   <div class="detalles-evaluacion-card">

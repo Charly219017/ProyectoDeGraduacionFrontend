@@ -12,15 +12,17 @@
             <th>Nombre</th>
             <th>Puesto</th>
             <th>Fecha de Publicación</th>
+            <th>Estado de aplicacion</th>
             <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="vacante in vacantes" :key="vacante.id_vacante">
             <td>{{ vacante.id_vacante }}</td>
-            <td>{{ vacante.nombre_vacante }}</td>
+            <td>{{ vacante.titulo }}</td>
             <td>{{ getPuestoNombre(vacante.id_puesto) }}</td>
             <td>{{ new Date(vacante.fecha_publicacion).toLocaleDateString() }}</td>
+            <td>{{ vacante.estado }}</td>
             <td>
               <button class="btn-editar" @click="$emit('editar', vacante)">Editar</button>
               <button class="btn-eliminar" @click="$emit('eliminar', vacante.id_vacante)">Eliminar</button>

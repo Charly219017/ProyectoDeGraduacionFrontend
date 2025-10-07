@@ -1,9 +1,8 @@
-
 // frontend/src/vistas/ReclutamientoEvaluaciones.vue
 <template>
   <div class="reclutamiento-evaluaciones-container">
     <div class="reclutamiento-header">
-      <h1 class="text-3xl font-bold text-gray-800">Gestión de Evaluaciones</h1>
+      <h1 class="text-3xl font-bold text-gray-800">Gestión de Evaluaciones de Desempeño</h1>
       <button 
         @click="abrirFormulario('crear')"
         class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300"
@@ -13,7 +12,7 @@
     </div>
 
     <evaluaciones-tabla 
-      :evaluaciones="evaluaciones" 
+      :evaluaciones="evaluaciones"
       :criterios="criterios"
       :cargando="cargando"
       @editar="abrirFormulario('editar', $event)" 
@@ -24,10 +23,7 @@
       :mostrar="mostrarModal"
       :modo="modoFormulario"
       :evaluacion-data="formulario"
-      :aplicaciones="aplicaciones"
-      :criterios="criterios"
-      :vacantes="vacantes"
-      :candidatos="candidatos"
+      :empleados="empleados"
       @cerrar="cerrarModal"
       @guardar="guardarEvaluacion"
     />
@@ -38,42 +34,36 @@
 import { ref, onMounted } from 'vue';
 import EvaluacionesTabla from '../components/Reclutamiento/EvaluacionesTabla.vue';
 import EvaluacionFormModal from '../components/Reclutamiento/EvaluacionFormModal.vue';
-import ReclutamientoService from '../services/reclutamiento.js';
-import { useAuthStore } from '../store/index.js';
+import ReclutamientoService from '../services/reclutamiento.js'; 
+import EmpleadosService from '../services/empleados.js';
 
 const evaluaciones = ref([]);
-const aplicaciones = ref([]);
+const empleados = ref([]);
 const criterios = ref([]);
-const vacantes = ref([]);
-const candidatos = ref([]);
 const cargando = ref(true);
 const mostrarModal = ref(false);
 const modoFormulario = ref('crear');
 
-const authStore = useAuthStore();
 const formulario = ref({
   id_evaluacion: null,
-  id_aplicacion: null,
-  id_criterio: null,
-  puntuacion: 0,
-  comentarios: ''
+  id_empleado: null,
+  fecha_evaluacion: '',
+  evaluador: '',
+  comentarios: '',
+  puntuacion_total: null
 });
 
 const obtenerDatos = async () => {
   cargando.value = true;
   try {
-    const [evaluacionesData, aplicacionesData, criteriosData, vacantesData, candidatosData] = await Promise.all([
+    const [evaluacionesData, empleadosData, criteriosData] = await Promise.all([
       ReclutamientoService.obtenerEvaluaciones(),
-      ReclutamientoService.obtenerAplicaciones(),
-      ReclutamientoService.obtenerCriterios(),
-      ReclutamientoService.obtenerVacantes(),
-      ReclutamientoService.obtenerCandidatos()
+      EmpleadosService.obtenerTodosEmpleados(),
+      ReclutamientoService.obtenerCriterios()
     ]);
     evaluaciones.value = evaluacionesData;
-    aplicaciones.value = aplicacionesData;
+    empleados.value = empleadosData;
     criterios.value = criteriosData;
-    vacantes.value = vacantesData;
-    candidatos.value = candidatosData;
   } catch (error) {
     console.error('Error al obtener datos iniciales:', error);
   } finally {
@@ -86,13 +76,15 @@ const abrirFormulario = (modo, evaluacion = null) => {
   if (modo === 'crear') {
     formulario.value = {
       id_evaluacion: null,
-      id_aplicacion: null,
-      id_criterio: null,
-      puntuacion: 0,
-      comentarios: ''
+      id_empleado: null,
+      fecha_evaluacion: new Date().toISOString().slice(0, 10),
+      evaluador: '',
+      comentarios: '',
+      puntuacion_total: null
     };
   } else {
-    formulario.value = { ...evaluacion };
+    const fecha = evaluacion.fecha_evaluacion ? new Date(evaluacion.fecha_evaluacion).toISOString().slice(0, 10) : '';
+    formulario.value = { ...evaluacion, fecha_evaluacion: fecha };
   }
   mostrarModal.value = true;
 };
@@ -102,12 +94,11 @@ const cerrarModal = () => {
 };
 
 const guardarEvaluacion = async (datosEvaluacion, modo) => {
-  const usuarioActualId = authStore.usuario?.id_usuario;
   try {
     if (modo === 'crear') {
-      await ReclutamientoService.crearEvaluacion(datosEvaluacion, usuarioActualId);
+      await ReclutamientoService.crearEvaluacion(datosEvaluacion);
     } else {
-      await ReclutamientoService.actualizarEvaluacion(datosEvaluacion.id_evaluacion, datosEvaluacion, usuarioActualId);
+      await ReclutamientoService.actualizarEvaluacion(datosEvaluacion.id_evaluacion, datosEvaluacion);
     }
     await obtenerDatos();
     cerrarModal();
@@ -118,9 +109,8 @@ const guardarEvaluacion = async (datosEvaluacion, modo) => {
 
 const eliminarEvaluacion = async (id) => {
   if (window.confirm('¿Estás seguro de que deseas eliminar esta evaluación?')) {
-    const usuarioActualId = authStore.usuario?.id_usuario;
     try {
-      await ReclutamientoService.eliminarEvaluacion(id, usuarioActualId);
+      await ReclutamientoService.eliminarEvaluacion(id);
       await obtenerDatos();
     } catch (error) {
       window.alert(`Error al eliminar la evaluación: ${error.message}`);
@@ -178,5 +168,4 @@ onMounted(() => {
   background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
   box-shadow: 0 8px 20px rgba(102, 126, 234, 0.15);
 }
-
 </style>

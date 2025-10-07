@@ -86,12 +86,11 @@ const cerrarModal = () => {
 };
 
 const guardarCandidato = async (datosCandidato, modo) => {
-  const usuarioActualId = authStore.usuario?.id_usuario;
   try {
     if (modo === 'crear') {
-      await ReclutamientoService.crearCandidato(datosCandidato, usuarioActualId);
+      await ReclutamientoService.crearCandidato(datosCandidato);
     } else {
-      await ReclutamientoService.actualizarCandidato(datosCandidato.id_candidato, datosCandidato, usuarioActualId);
+      await ReclutamientoService.actualizarCandidato(datosCandidato.id_candidato, datosCandidato);
     }
     await obtenerDatos();
     cerrarModal();
@@ -100,11 +99,10 @@ const guardarCandidato = async (datosCandidato, modo) => {
   }
 };
 
-const eliminarCandidato = async (id) => {
+const eliminarCandidato = async (id_candidato) => {
   if (window.confirm('¿Estás seguro de que deseas eliminar este candidato?')) {
-    const usuarioActualId = authStore.usuario?.id_usuario;
     try {
-      await ReclutamientoService.eliminarCandidato(id, usuarioActualId);
+      await ReclutamientoService.eliminarCandidato(id_candidato);
       await obtenerDatos();
     } catch (error) {
       window.alert(`Error al eliminar el candidato: ${error.message}`);

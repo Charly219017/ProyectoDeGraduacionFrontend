@@ -97,12 +97,11 @@ const cerrarModal = () => {
 };
 
 const guardarAplicacion = async (datosAplicacion, modo) => {
-  const usuarioActualId = authStore.usuario?.id_usuario;
   try {
     if (modo === 'crear') {
-      await ReclutamientoService.crearAplicacion(datosAplicacion, usuarioActualId);
+      await ReclutamientoService.crearAplicacion(datosAplicacion);
     } else {
-      await ReclutamientoService.actualizarAplicacion(datosAplicacion.id_aplicacion, datosAplicacion, usuarioActualId);
+      await ReclutamientoService.actualizarAplicacion(datosAplicacion.id_aplicacion, datosAplicacion);
     }
     await obtenerDatos();
     cerrarModal();
@@ -111,11 +110,10 @@ const guardarAplicacion = async (datosAplicacion, modo) => {
   }
 };
 
-const eliminarAplicacion = async (id) => {
+const eliminarAplicacion = async (id_aplicacion) => {
   if (window.confirm('¿Estás seguro de que deseas eliminar esta aplicación?')) {
-    const usuarioActualId = authStore.usuario?.id_usuario;
     try {
-      await ReclutamientoService.eliminarAplicacion(id, usuarioActualId);
+      await ReclutamientoService.eliminarAplicacion(id_aplicacion);
       await obtenerDatos();
     } catch (error) {
       window.alert(`Error al eliminar la aplicación: ${error.message}`);

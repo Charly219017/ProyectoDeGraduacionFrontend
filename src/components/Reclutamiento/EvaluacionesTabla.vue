@@ -1,4 +1,3 @@
-
 // frontend/src/componentes/Reclutamiento/EvaluacionesTabla.vue
 <template>
   <div class="evaluaciones-card">
@@ -9,9 +8,10 @@
         <thead>
           <tr>
             <th>ID</th>
-            <th>Aplicación</th>
-            <th>Criterio</th>
-            <th>Puntuación</th>
+            <th>Empleado</th>
+            <th>Fecha</th>
+            <th>Evaluador</th>
+            <th>Puntuación Total</th>
             <th>Comentarios</th>
             <th>Acciones</th>
           </tr>
@@ -19,9 +19,10 @@
         <tbody>
           <tr v-for="evaluacion in evaluaciones" :key="evaluacion.id_evaluacion">
             <td>{{ evaluacion.id_evaluacion }}</td>
-            <td>Aplicación #{{ evaluacion.id_aplicacion }}</td>
-            <td>{{ getCriterioNombre(evaluacion.id_criterio) }}</td>
-            <td>{{ evaluacion.puntuacion }}</td>
+            <td>{{ getEmpleadoNombre(evaluacion.id_empleado) }}</td>
+            <td>{{ evaluacion.fecha_evaluacion }}</td>
+            <td>{{ evaluacion.evaluador }}</td>
+            <td>{{ evaluacion.puntuacion_total }}</td>
             <td>{{ evaluacion.comentarios }}</td>
             <td>
               <button class="btn-editar" @click="$emit('editar', evaluacion)">Editar</button>
@@ -38,15 +39,12 @@
 </template>
 
 <script setup>
-
-
-
 const props = defineProps({
   evaluaciones: {
     type: Array,
     required: true,
   },
-  criterios: {
+  empleados: {
     type: Array,
     required: true,
   },
@@ -58,9 +56,9 @@ const props = defineProps({
 
 const emit = defineEmits(['editar', 'eliminar']);
 
-const getCriterioNombre = (id_criterio) => {
-  const criterio = props.criterios.find(c => c.id_criterio === id_criterio);
-  return criterio ? criterio.nombre_criterio : 'Desconocido';
+const getEmpleadoNombre = (id_empleado) => {
+  const empleado = props.empleados.find(e => e.id_empleado === id_empleado);
+  return empleado ? empleado.nombre_completo : 'Desconocido';
 };
 </script>
 
