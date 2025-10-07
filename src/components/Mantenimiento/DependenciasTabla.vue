@@ -8,15 +8,17 @@
       <table class="dependencias-table">
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Nombre</th>
+            <th>Puesto Subordinado</th>
+            <th class="arrow-column"></th>
+            <th>Puesto Superior</th>
             <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="dependencia in dependencias" :key="dependencia.id_dependencia">
-            <td>{{ dependencia.id_dependencia }}</td>
-            <td>{{ dependencia.nombre_dependencia }}</td>
+            <td>{{ dependencia.nombre_puesto_subordinado }}</td>
+            <td class="arrow-column">→</td>
+            <td>{{ dependencia.nombre_puesto_superior }}</td>
             <td>
               <button class="btn-editar" @click="$emit('editar', dependencia)">Editar</button>
               <button class="btn-eliminar" @click="$emit('eliminar', dependencia.id_dependencia)">Eliminar</button>

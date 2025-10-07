@@ -23,6 +23,7 @@
       :mostrar="mostrarModal"
       :modo="modoFormulario"
       :dependencia-data="formulario"
+      :puestos="puestos"
       @cerrar="cerrarModal"
       @guardar="guardarDependencia"
     />
@@ -51,12 +52,25 @@ const formulario = ref({
 const obtenerDatos = async () => {
   cargando.value = true;
   try {
-    const [dependenciasData, puestosData] = await Promise.all([
-      DependenciaService.obtenerTodasDependencias(),
-      PuestoService.obtenerPuestos()
+    const [puestosData, dependenciasData] = await Promise.all([
+      PuestoService.obtenerPuestos(),
+      DependenciaService.obtenerTodasDependencias()
     ]);
-    dependencias.value = dependenciasData;
+    
     puestos.value = puestosData;
+
+    const dependenciasEnriquecidas = dependenciasData.map(dep => {
+      const puestoSuperior = puestosData.find(p => p.id_puesto === dep.id_puesto_superior);
+      const puestoSubordinado = puestosData.find(p => p.id_puesto === dep.id_puesto_subordinado);
+      return {
+        ...dep,
+        nombre_puesto_superior: puestoSuperior ? puestoSuperior.nombre_puesto : 'No definido',
+        nombre_puesto_subordinado: puestoSubordinado ? puestoSubordinado.nombre_puesto : 'No definido',
+      };
+    });
+
+    dependencias.value = dependenciasEnriquecidas;
+
   } catch (error) {
     console.error('Error al obtener datos:', error);
   } finally {
