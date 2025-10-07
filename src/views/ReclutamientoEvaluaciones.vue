@@ -13,6 +13,7 @@
 
     <evaluaciones-tabla 
       :evaluaciones="evaluaciones"
+      :empleados="empleados"
       :criterios="criterios"
       :cargando="cargando"
       @editar="abrirFormulario('editar', $event)" 

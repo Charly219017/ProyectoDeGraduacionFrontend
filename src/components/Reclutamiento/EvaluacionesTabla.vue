@@ -46,7 +46,8 @@ const props = defineProps({
   },
   empleados: {
     type: Array,
-    required: true,
+    required: false,
+    default: () => [],
   },
   cargando: {
     type: Boolean,
@@ -57,8 +58,9 @@ const props = defineProps({
 const emit = defineEmits(['editar', 'eliminar']);
 
 const getEmpleadoNombre = (id_empleado) => {
-  const empleado = props.empleados.find(e => e.id_empleado === id_empleado);
-  return empleado ? empleado.nombre_completo : 'Desconocido';
+  const lista = Array.isArray(props.empleados) ? props.empleados : [];
+  const empleado = lista.find(e => e && (e.id_empleado === id_empleado));
+  return empleado && empleado.nombre_completo ? empleado.nombre_completo : 'Desconocido';
 };
 </script>
 
