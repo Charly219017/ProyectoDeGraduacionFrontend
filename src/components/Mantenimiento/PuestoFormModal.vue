@@ -25,6 +25,20 @@
             class="w-full px-3 py-2 border rounded-md"
           >
         </div>
+        <div class="form-group">
+          <label for="id_carrera">Carrera</label>
+          <select 
+            id="id_carrera" 
+            v-model="formularioLocal.id_carrera" 
+            required
+            class="w-full px-3 py-2 border rounded-md"
+          >
+            <option disabled value="">Seleccione una carrera</option>
+            <option v-for="carrera in carreras" :key="carrera.id_carrera" :value="carrera.id_carrera">
+              {{ carrera.nombre_carrera }}
+            </option>
+          </select>
+        </div>
         <div v-if="errorFormulario" class="error-message">
           {{ errorFormulario }}
         </div>
@@ -80,7 +94,7 @@ watch(() => props.puestoData, (newData) => {
 }, { deep: true, immediate: true });
 
 const handleSubmit = () => {
-  if (!formularioLocal.value.nombre_puesto || !formularioLocal.value.salario_base) {
+  if (!formularioLocal.value.nombre_puesto || !formularioLocal.value.salario_base || !formularioLocal.value.id_carrera) {
     errorFormulario.value = 'Por favor, completa todos los campos obligatorios.';
     return;
   }

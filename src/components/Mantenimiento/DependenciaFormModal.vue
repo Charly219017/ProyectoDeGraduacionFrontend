@@ -12,6 +12,7 @@
             required
             class="w-full px-3 py-2 border rounded-md"
           >
+            <option disabled value="">Seleccione un puesto</option>
             <option v-for="puesto in puestos" :key="puesto.id_puesto" :value="puesto.id_puesto">{{ puesto.nombre_puesto }}</option>
           </select>
         </div>
@@ -23,6 +24,7 @@
             required
             class="w-full px-3 py-2 border rounded-md"
           >
+            <option disabled value="">Seleccione un puesto</option>
             <option v-for="puesto in puestos" :key="puesto.id_puesto" :value="puesto.id_puesto">{{ puesto.nombre_puesto }}</option>
           </select>
         </div>
@@ -83,6 +85,10 @@ watch(() => props.dependenciaData, (newData) => {
 const handleSubmit = () => {
   if (!formularioLocal.value.id_puesto_superior || !formularioLocal.value.id_puesto_subordinado) {
     errorFormulario.value = 'Por favor, completa todos los campos obligatorios.';
+    return;
+  }
+  if (formularioLocal.value.id_puesto_superior === formularioLocal.value.id_puesto_subordinado) {
+    errorFormulario.value = 'Un puesto no puede depender de sí mismo. Seleccione puestos diferentes.';
     return;
   }
   emit('guardar', formularioLocal.value, props.modo);

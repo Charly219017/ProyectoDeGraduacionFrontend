@@ -24,33 +24,18 @@ export const useAuthStore = defineStore('auth', () => {
       cargando.value = true
       error.value = null
       
-      const respuesta = await authService.login(credenciales)
+      const respuestaToken = await authService.login(credenciales)
+      token.value = respuestaToken.token
+      localStorage.setItem('token', respuestaToken.token)
       
-      token.value = respuesta.token
-      usuario.value = respuesta.usuario
-      
-      localStorage.setItem('token', respuesta.token)
-      localStorage.setItem('usuario', JSON.stringify(respuesta.usuario))
-      
+      const respuestaUsuario = await authService.obtenerPerfil()
+      usuario.value = respuestaUsuario.usuario
+      localStorage.setItem('usuario', JSON.stringify(respuestaUsuario.usuario))
+
       return { exito: true }
     } catch (err) {
       error.value = err.response?.data?.mensaje || 'Error en el inicio de sesión'
-      return { exito: false, error: error.value }
-    } finally {
-      cargando.value = false
-    }
-  }
-
-  const registro = async (datosUsuario) => {
-    try {
-      cargando.value = true
-      error.value = null
-      
-      const respuesta = await authService.registro(datosUsuario)
-      
-      return { exito: true, mensaje: 'Usuario registrado exitosamente' }
-    } catch (err) {
-      error.value = err.response?.data?.mensaje || 'Error en el registro'
+      logout()
       return { exito: false, error: error.value }
     } finally {
       cargando.value = false
@@ -61,56 +46,58 @@ export const useAuthStore = defineStore('auth', () => {
     token.value = null
     usuario.value = null
     error.value = null
-    
     localStorage.removeItem('token')
     localStorage.removeItem('usuario')
   }
 
-  const cargarUsuario = async () => {
-    if (!token.value) return false
-    
-    try {
-      const respuesta = await authService.obtenerPerfil()
-      usuario.value = respuesta.usuario
-      return true
-    } catch (err) {
-      logout()
-      return false
+  const cargarSesion = async () => {
+    const tokenGuardado = localStorage.getItem('token');
+    token.value = tokenGuardado;
+
+    if (!tokenGuardado) {
+      return; // No hay sesión que cargar
     }
-  }
+
+    const usuarioGuardado = localStorage.getItem('usuario');
+    if (usuarioGuardado && usuarioGuardado !== 'undefined' && usuarioGuardado !== 'null') {
+      try {
+        usuario.value = JSON.parse(usuarioGuardado);
+        return; // Carga exitosa desde localStorage
+      } catch (e) {
+        console.error("Datos de usuario corruptos en localStorage, limpiando.", e);
+        localStorage.removeItem('usuario'); // Limpiar datos erróneos
+      }
+    }
+
+    // Si no hay usuario en localStorage o los datos estaban corruptos, obtener de la API
+    try {
+      console.log("No hay usuario en localStorage, obteniendo perfil desde la API...");
+      const respuestaUsuario = await authService.obtenerPerfil();
+      usuario.value = respuestaUsuario.usuario;
+      localStorage.setItem('usuario', JSON.stringify(respuestaUsuario.usuario));
+    } catch (err) {
+      console.error("Fallo al obtener el perfil del usuario, cerrando sesión.", err);
+      logout(); // El token probablemente es inválido
+    }
+  };
 
   const limpiarError = () => {
     error.value = null
   }
 
-  // Inicializar usuario desde localStorage
-  const inicializar = () => {
-    const usuarioGuardado = localStorage.getItem('usuario')
-    if (usuarioGuardado && token.value) {
-      usuario.value = JSON.parse(usuarioGuardado)
-    }
-  }
-
   return {
-    // Estado
     usuario,
     token,
     cargando,
     error,
-    
-    // Getters
     estaAutenticado,
     obtenerUsuario,
     obtenerToken,
     obtenerCargando,
     obtenerError,
-    
-    // Actions
     login,
-    registro,
     logout,
-    cargarUsuario,
-    limpiarError,
-    inicializar
+    cargarSesion,
+    limpiarError
   }
-}) 
+})

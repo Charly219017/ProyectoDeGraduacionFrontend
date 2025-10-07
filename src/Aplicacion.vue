@@ -9,10 +9,9 @@
 </template>
 
 <script>
-import { computed, onMounted } from 'vue'
+import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import BarraNavegacion from './components/BarraNavegacion.vue'
-import { useAuthStore } from './store'
 
 export default {
   name: 'Aplicacion',
@@ -21,11 +20,7 @@ export default {
   },
   setup() {
     const route = useRoute()
-    const authStore = useAuthStore()
-
-    onMounted(() => {
-      authStore.inicializar()
-    })
+    
     
     // Mostrar navegación solo si no estamos en login
     const mostrarNavegacion = computed(() => {

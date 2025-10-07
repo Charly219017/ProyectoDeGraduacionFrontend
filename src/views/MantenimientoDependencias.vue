@@ -33,32 +33,32 @@
 import { ref, onMounted } from 'vue';
 import DependenciasTabla from '../components/Mantenimiento/DependenciasTabla.vue';
 import DependenciaFormModal from '../components/Mantenimiento/DependenciaFormModal.vue';
-import { 
-  obtenerDependencias, 
-  crearDependencia, 
-  actualizarDependencia, 
-  eliminarDependencia as eliminarDependenciaApi
-} from '../services/dependencias.js';
-import { useAuthStore } from '../store/index.js';
+import DependenciaService from '../services/dependencias.js';
+import PuestoService from '../services/puestos.js';
 
 const dependencias = ref([]);
+const puestos = ref([]);
 const cargando = ref(true);
 const mostrarModal = ref(false);
 const modoFormulario = ref('crear');
 
-const authStore = useAuthStore();
 const formulario = ref({
   id_dependencia: null,
-  nombre_dependencia: ''
+  id_puesto_superior: '',
+  id_puesto_subordinado: ''
 });
 
 const obtenerDatos = async () => {
   cargando.value = true;
   try {
-    const respuesta = await obtenerDependencias();
-    dependencias.value = respuesta;
+    const [dependenciasData, puestosData] = await Promise.all([
+      DependenciaService.obtenerTodasDependencias(),
+      PuestoService.obtenerPuestos()
+    ]);
+    dependencias.value = dependenciasData;
+    puestos.value = puestosData;
   } catch (error) {
-    console.error('Error al obtener dependencias:', error);
+    console.error('Error al obtener datos:', error);
   } finally {
     cargando.value = false;
   }
@@ -69,7 +69,8 @@ const abrirFormulario = (modo, dependencia = null) => {
   if (modo === 'crear') {
     formulario.value = {
       id_dependencia: null,
-      nombre_dependencia: ''
+      id_puesto_superior: '',
+      id_puesto_subordinado: ''
     };
   } else {
     formulario.value = { ...dependencia };
@@ -82,12 +83,11 @@ const cerrarModal = () => {
 };
 
 const guardarDependencia = async (datosDependencia, modo) => {
-  const usuarioActualId = authStore.usuario?.id_usuario;
   try {
     if (modo === 'crear') {
-      await crearDependencia(datosDependencia, usuarioActualId);
+      await DependenciaService.crearDependencia(datosDependencia);
     } else {
-      await actualizarDependencia(datosDependencia.id_dependencia, datosDependencia, usuarioActualId);
+      await DependenciaService.actualizarDependencia(datosDependencia.id_dependencia, datosDependencia);
     }
     await obtenerDatos();
     cerrarModal();
@@ -98,9 +98,8 @@ const guardarDependencia = async (datosDependencia, modo) => {
 
 const eliminarDependencia = async (id) => {
   if (window.confirm('¿Estás seguro de que deseas eliminar esta dependencia?')) {
-    const usuarioActualId = authStore.usuario?.id_usuario;
     try {
-      await eliminarDependenciaApi(id, usuarioActualId);
+      await DependenciaService.eliminarDependencia(id);
       await obtenerDatos();
     } catch (error) {
       window.alert(`Error al eliminar la dependencia: ${error.message}`);

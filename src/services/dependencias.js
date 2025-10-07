@@ -1,62 +1,71 @@
-// src/servicios/dependencias.js
+// src/services/dependencias.js
 import axios from 'axios';
-const API_BASE_URL = '/api';
 
-function getAuthHeader() {
-  const token = localStorage.getItem('token');
-  return { Authorization: `Bearer ${token}` };
+class DependenciaService {
+  constructor() {
+    this.axiosInstance = axios.create({
+      baseURL: '/api',
+    });
+
+    this.axiosInstance.interceptors.request.use((config) => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
+    }, (error) => {
+      return Promise.reject(error);
+    });
+  }
+
+  async obtenerTodasDependencias() {
+    try {
+      const response = await this.axiosInstance.get('/dependencias/obtenerdependencias');
+      return response.data;
+    } catch (error) {
+      console.error('Error al obtener dependencias:', error);
+      throw error;
+    }
+  }
+
+  async crearDependencia(datosDependencia) {
+    try {
+      const response = await this.axiosInstance.post('/dependencias/creardependencia', datosDependencia);
+      return response.data;
+    } catch (error) {
+      console.error('Error al crear dependencia:', error);
+      throw error;
+    }
+  }
+
+  async obtenerDependenciaPorId(id_dependencia) {
+    try {
+      const response = await this.axiosInstance.get(`/dependencias/${id_dependencia}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Error al obtener la dependencia con ID ${id_dependencia}:`, error);
+      throw error;
+    }
+  }
+
+  async actualizarDependencia(id_dependencia, datosActualizados) {
+    try {
+      const response = await this.axiosInstance.put(`/dependencias/${id_dependencia}`, datosActualizados);
+      return response.data;
+    } catch (error) {
+      console.error('Error al actualizar dependencia:', error);
+      throw error;
+    }
+  }
+
+  async eliminarDependencia(id_dependencia) {
+    try {
+      await this.axiosInstance.delete(`/dependencias/${id_dependencia}`);
+    } catch (error) {
+      console.error('Error al eliminar dependencia:', error);
+      throw error;
+    }
+  }
 }
 
-export const obtenerDependencias = async () => {
-  try {
-    const response = await axios.get(`${API_BASE_URL}/dependencias/obtenerdependencias`, { headers: getAuthHeader() });
-    return response.data;
-  } catch (error) {
-    console.error('Error al obtener dependencias:', error);
-    throw error;
-  }
-};
-
-export const crearDependencia = async (datosDependencia, auditor) => {
-  try {
-    const payload = { ...datosDependencia, auditor };
-    const response = await axios.post(`${API_BASE_URL}/dependencias/creardependencia`, payload, { headers: getAuthHeader() });
-    return response.data;
-  } catch (error) {
-    console.error('Error al crear dependencia:', error);
-    throw error;
-  }
-};
-
-export const obtenerDependenciaPorId = async (id) => {
-  try {
-    const response = await axios.get(`${API_BASE_URL}/dependencias/${id}`, { headers: getAuthHeader() });
-    return response.data;
-  } catch (error) {
-    console.error(`Error al obtener la dependencia con ID ${id}:`, error);
-    throw error;
-  }
-};
-
-export const actualizarDependencia = async (id, datosActualizados, auditor) => {
-  try {
-    const payload = { ...datosActualizados, auditor };
-    const response = await axios.put(`${API_BASE_URL}/dependencias/${id}`, payload, { headers: getAuthHeader() });
-    return response.data;
-  } catch (error) {
-    console.error('Error al actualizar dependencia:', error);
-    throw error;
-  }
-};
-
-export const eliminarDependencia = async (id, auditor) => {
-  try {
-    await axios.delete(`${API_BASE_URL}/dependencias/${id}`, {
-      headers: getAuthHeader(),
-      data: { auditor }
-    });
-  } catch (error) {
-    console.error('Error al eliminar dependencia:', error);
-    throw error;
-  }
-};
+export default new DependenciaService();

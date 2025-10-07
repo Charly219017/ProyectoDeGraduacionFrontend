@@ -1,5 +1,6 @@
 // src/services/empleados.js
 import axios from 'axios';
+import { useAuthStore } from '../store';
 
 class EmpleadoService {
   constructor() {
@@ -28,20 +29,19 @@ class EmpleadoService {
     }
   }
 
-  async obtenerEmpleadoPorId(id) {
+  async obtenerEmpleadoPorId(id_empleado) {
     try {
-      const response = await this.axiosInstance.get(`/empleados/obtener/${id}`);
+      const response = await this.axiosInstance.get(`/empleados/obtener/${id_empleado}`);
       return response.data;
     } catch (error) {
-      console.error(`Error al obtener el empleado con ID ${id}:`, error);
+      console.error(`Error al obtener el empleado con ID ${id_empleado}:`, error);
       throw error;
     }
   }
 
-  async crearEmpleado(datosEmpleado, idUsuario) {
+  async crearEmpleado(datosEmpleado) {
     try {
-      const payload = { ...datosEmpleado, creado_por: idUsuario };
-      const response = await this.axiosInstance.post('/empleados/crearempleado', payload);
+      const response = await this.axiosInstance.post('/empleados/crearempleado', datosEmpleado);
       return response.data;
     } catch (error) {
       console.error('Error al crear empleado:', error);
@@ -49,10 +49,9 @@ class EmpleadoService {
     }
   }
 
-  async actualizarEmpleado(id, datosActualizados, idUsuario) {
+  async actualizarEmpleado(id_empleado, datosActualizados) {
     try {
-      const payload = { ...datosActualizados, actualizado_por: idUsuario };
-      const response = await this.axiosInstance.put(`/empleados/actualizar/${id}`, payload);
+      const response = await this.axiosInstance.put(`/empleados/actualizar/${id_empleado}`, datosActualizados);
       return response.data;
     } catch (error) {
       console.error('Error al actualizar empleado:', error);
@@ -60,10 +59,9 @@ class EmpleadoService {
     }
   }
 
-  async eliminarEmpleado(id, idUsuario) {
+  async eliminarEmpleado(id_empleado) {
     try {
-      // Borrado lógico: se actualiza el estado del empleado a 'inactivo'
-      await this.axiosInstance.delete(`/empleados/eliminar/${id}`, { data: { actualizado_por: idUsuario } });
+      await this.axiosInstance.delete(`/empleados/eliminar/${id_empleado}`);
     } catch (error) {
       console.error('Error al eliminar empleado:', error);
       throw error;

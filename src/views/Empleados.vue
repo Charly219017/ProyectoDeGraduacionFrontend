@@ -138,14 +138,11 @@ const cerrarModal = () => {
 };
 
 const guardarEmpleado = async (datosEmpleado, modo) => {
-  const usuarioIdAuditor = authStore.usuario?.id_usuario;
   try {
     if (modo === 'crear') {
-      // **AUDITORÍA**: Pasamos el ID del usuario auditor al servicio
-      await EmpleadoService.crearEmpleado(datosEmpleado, usuarioIdAuditor);
+      await EmpleadoService.crearEmpleado(datosEmpleado);
     } else {
-      // **AUDITORÍA**: Pasamos el ID del usuario auditor al servicio
-      await EmpleadoService.actualizarEmpleado(datosEmpleado.id_empleado, datosEmpleado, usuarioIdAuditor);
+      await EmpleadoService.actualizarEmpleado(datosEmpleado.id_empleado, datosEmpleado);
     }
     await obtenerDatosIniciales();
     cerrarModal();
@@ -161,10 +158,8 @@ const eliminarEmpleado = async (id) => {
 
 const confirmarEliminar = async () => {
   if (!empleadoAEliminar.value) return;
-  const usuarioIdAuditor = authStore.usuario?.id_usuario;
   try {
-    // **AUDITORÍA**: Pasamos el ID del usuario auditor al servicio
-    await EmpleadoService.eliminarEmpleado(empleadoAEliminar.value, usuarioIdAuditor);
+    await EmpleadoService.eliminarEmpleado(empleadoAEliminar.value);
     await obtenerDatosIniciales();
   } catch (error) {
     console.error('Error al eliminar empleado:', error);

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { useAuthStore } from '../store';
 
 class PuestoService {
   constructor() {
@@ -27,10 +28,9 @@ class PuestoService {
     }
   }
 
-  async crearPuesto(datosPuesto, idUsuario) {
+  async crearPuesto(datosPuesto) {
     try {
-      const payload = { ...datosPuesto, creado_por: idUsuario };
-      const response = await this.axiosInstance.post('/puestos/crearpuesto', payload);
+      const response = await this.axiosInstance.post('/puestos/crearpuesto', datosPuesto);
       return response.data;
     } catch (error) {
       console.error('Error al crear puesto:', error);
@@ -38,20 +38,19 @@ class PuestoService {
     }
   }
 
-  async obtenerPuestoPorId(id) {
+  async obtenerPuestoPorId(id_puesto) {
     try {
-      const response = await this.axiosInstance.get(`/puestos/${id}`);
+      const response = await this.axiosInstance.get(`/puestos/${id_puesto}`);
       return response.data;
     } catch (error) {
-      console.error(`Error al obtener el puesto con ID ${id}:`, error);
+      console.error(`Error al obtener el puesto con ID ${id_puesto}:`, error);
       throw error;
     }
   }
 
-  async actualizarPuesto(id, datosActualizados, idUsuario) {
+  async actualizarPuesto(id_puesto, datosActualizados) {
     try {
-      const payload = { ...datosActualizados, actualizado_por: idUsuario };
-      const response = await this.axiosInstance.put(`/puestos/${id}`, payload);
+      const response = await this.axiosInstance.put(`/puestos/${id_puesto}`, datosActualizados);
       return response.data;
     } catch (error) {
       console.error('Error al actualizar puesto:', error);
@@ -59,9 +58,9 @@ class PuestoService {
     }
   }
 
-  async eliminarPuesto(id, idUsuario) {
+  async eliminarPuesto(id_puesto) {
     try {
-      await this.axiosInstance.delete(`/puestos/${id}`, { data: { actualizado_por: idUsuario } });
+      await this.axiosInstance.delete(`/puestos/${id_puesto}`);
     } catch (error) {
       console.error('Error al eliminar puesto:', error);
       throw error;

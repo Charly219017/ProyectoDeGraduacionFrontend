@@ -93,8 +93,8 @@
                 class="form-select"
               >
                 <option value="" disabled>Selecciona un estado civil</option>
-                <option value="Soltero(a)">Soltero(a)</option>
-                <option value="Casado(a)">Casado(a)</option>
+                <option value="Soltero">Soltero(a)</option>
+                <option value="Casado">Casado(a)</option>
               </select>
             </div>
             <div>
@@ -137,7 +137,10 @@
               <p class="form-input-readonly">{{ carreraNombre }}</p>
             </div>
           </div>
-          
+          <div v-if="errorFormulario" class="error-message">
+            {{ errorFormulario }}
+          </div>
+
           <div class="modal-actions">
             <button 
               type="button" 
@@ -201,6 +204,7 @@ const props = defineProps({
 const emits = defineEmits(['cerrar', 'guardar']);
 
 const formularioLocal = ref({ ...props.empleadoData });
+const errorFormulario = ref(null);
 
 watch(() => props.empleadoData, (newData) => {
   formularioLocal.value = { ...newData };
@@ -218,7 +222,27 @@ const carreraNombre = computed(() => {
 });
 
 const manejarGuardar = () => {
-  emits('guardar', formularioLocal.value, props.modo);
+  const datosParaGuardar = { ...formularioLocal.value };
+
+  // Validación de campos obligatorios
+  if (!datosParaGuardar.nombre_completo || !datosParaGuardar.dpi || !datosParaGuardar.correo_personal || !datosParaGuardar.fecha_ingreso || !datosParaGuardar.id_puesto) {
+    errorFormulario.value = 'Por favor, completa todos los campos obligatorios.';
+    return;
+  }
+
+  // Convertir campos opcionales vacíos a null para consistencia en la BD
+  if (datosParaGuardar.fecha_nacimiento === '') {
+    datosParaGuardar.fecha_nacimiento = null;
+  }
+  if (datosParaGuardar.genero === '') {
+    datosParaGuardar.genero = null;
+  }
+  if (datosParaGuardar.estado_civil === '') {
+    datosParaGuardar.estado_civil = null;
+  }
+
+  emits('guardar', datosParaGuardar, props.modo);
+  errorFormulario.value = null; // Limpiar error si la validación pasa
 };
 
 const cerrar = () => {
