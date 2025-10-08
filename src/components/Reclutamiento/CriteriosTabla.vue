@@ -8,7 +8,7 @@
       <table class="criterios-table">
         <thead>
           <tr>
-            <th>ID</th>
+            <th>Codigo</th>
             <th>Nombre</th>
             <th>Descripción</th>
             <th>Acciones</th>

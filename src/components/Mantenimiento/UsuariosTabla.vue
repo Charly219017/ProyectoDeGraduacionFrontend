@@ -7,7 +7,7 @@
       <table class="usuarios-table">
         <thead>
           <tr>
-            <th>ID</th>
+            <th>Codigo</th>
             <th>Nombre</th>
             <th>Email</th>
             <th>Rol</th>

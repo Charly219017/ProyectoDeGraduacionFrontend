@@ -8,7 +8,7 @@
       <table class="puestos-table">
         <thead>
           <tr>
-            <th>ID</th>
+            <th>Codigo</th>
             <th>Nombre</th>
             <th>Salario Base</th>
             <th>Acciones</th>

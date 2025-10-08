@@ -7,7 +7,7 @@
       <table class="evaluaciones-table">
         <thead>
           <tr>
-            <th>ID</th>
+            <th>Codigo</th>
             <th>Empleado</th>
             <th>Fecha</th>
             <th>Evaluador</th>

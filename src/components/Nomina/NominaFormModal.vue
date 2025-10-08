@@ -3,94 +3,69 @@
 <template>
   <div v-if="mostrar" class="modal-overlay">
     <div class="modal-content">
-      <h2 class="text-2xl font-bold mb-4">{{ modo === 'crear' ? 'Crear Nueva Nómina' : 'Editar Nómina' }}</h2>
+      <h2 class="text-2xl font-bold mb-4">{{ modo === 'crear' ? 'Generar Nueva Nómina' : 'Editar Nómina' }}</h2>
       <form @submit.prevent="handleSubmit">
-        <div class="form-group">
-          <label for="id_empleado">Empleado</label>
-          <select 
-            id="id_empleado" 
-            v-model="formularioLocal.id_empleado" 
-            required
-            class="w-full px-3 py-2 border rounded-md"
-          >
-            <option v-for="empleado in empleados" :key="empleado.id_empleado" :value="empleado.id_empleado">{{ empleado.nombre_completo }}</option>
-          </select>
+        
+        <!-- Empleado, Mes, Anio (se mantienen) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="form-group">
+            <label for="id_empleado">Empleado</label>
+            <select id="id_empleado" v-model="formularioLocal.id_empleado" required class="w-full px-3 py-2 border rounded-md">
+              <option disabled value="">Seleccione un empleado</option>
+              <option v-for="empleado in empleados" :key="empleado.id_empleado" :value="empleado.id_empleado">{{ empleado.nombre_completo }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="mes">Mes</label>
+            <input type="number" id="mes" v-model.number="formularioLocal.mes" required min="1" max="12" class="w-full px-3 py-2 border rounded-md">
+          </div>
+          <div class="form-group">
+            <label for="anio">Año</label>
+            <input type="number" id="anio" v-model.number="formularioLocal.anio" required min="2000" class="w-full px-3 py-2 border rounded-md">
+          </div>
         </div>
-        <div class="form-group">
-          <label for="mes">Mes</label>
-          <input 
-            type="number" 
-            id="mes" 
-            v-model="formularioLocal.mes" 
-            required 
-            class="w-full px-3 py-2 border rounded-md"
-          >
+
+        <hr class="my-4">
+        <p class="text-center font-semibold mb-4">Datos para el Cálculo</p>
+
+        <!-- Nuevos campos de entrada -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="form-group">
+            <label for="salario_base">Salario Base (Q)</label>
+            <input type="number" step="0.01" id="salario_base" v-model.number="formularioLocal.salario_base" required class="w-full px-3 py-2 border rounded-md">
+          </div>
+          <div class="form-group">
+            <label for="comisiones">Comisiones (Q)</label>
+            <input type="number" step="0.01" id="comisiones" v-model.number="formularioLocal.comisiones" class="w-full px-3 py-2 border rounded-md">
+          </div>
+          <div class="form-group">
+            <label for="horas_extras">Horas Extras (cantidad)</label>
+            <input type="number" step="0.01" id="horas_extras" v-model.number="formularioLocal.horas_extras" class="w-full px-3 py-2 border rounded-md">
+          </div>
         </div>
-        <div class="form-group">
-          <label for="anio">Año</label>
-          <input 
-            type="number" 
-            id="anio" 
-            v-model="formularioLocal.anio" 
-            required 
-            class="w-full px-3 py-2 border rounded-md"
-          >
+
+        <hr class="my-4">
+        <p class="text-center font-semibold mb-4">Deducciones Manuales</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="form-group">
+            <label for="isr">ISR (Q)</label>
+            <input type="number" step="0.01" id="isr" v-model.number="formularioLocal.isr" class="w-full px-3 py-2 border rounded-md">
+          </div>
+          <div class="form-group">
+            <label for="otros_descuentos">Otros Descuentos (Q)</label>
+            <input type="number" step="0.01" id="otros_descuentos" v-model.number="formularioLocal.otros_descuentos" class="w-full px-3 py-2 border rounded-md">
+          </div>
         </div>
-        <div class="form-group">
-          <label for="sueldo_bruto">Sueldo Bruto</label>
-          <input 
-            type="number" 
-            id="sueldo_bruto" 
-            v-model="formularioLocal.sueldo_bruto" 
-            required 
-            class="w-full px-3 py-2 border rounded-md"
-          >
-        </div>
-        <div class="form-group">
-          <label for="bonificaciones">Bonificaciones</label>
-          <input 
-            type="number" 
-            id="bonificaciones" 
-            v-model="formularioLocal.bonificaciones" 
-            required 
-            class="w-full px-3 py-2 border rounded-md"
-          >
-        </div>
-        <div class="form-group">
-          <label for="descuentos">Descuentos</label>
-          <input 
-            type="number" 
-            id="descuentos" 
-            v-model="formularioLocal.descuentos" 
-            required 
-            class="w-full px-3 py-2 border rounded-md"
-          >
-        </div>
-        <div class="form-group">
-          <label for="sueldo_neto">Sueldo Neto</label>
-          <input 
-            type="number" 
-            id="sueldo_neto" 
-            v-model="formularioLocal.sueldo_neto" 
-            required 
-            class="w-full px-3 py-2 border rounded-md"
-          >
-        </div>
+
         <div v-if="errorFormulario" class="error-message">
           {{ errorFormulario }}
         </div>
         <div class="form-actions">
-          <button 
-            type="submit" 
-            class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg mr-2"
-          >
-            Guardar
+          <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg mr-2">
+            {{ modo === 'crear' ? 'Generar Nómina' : 'Actualizar Nómina' }}
           </button>
-          <button 
-            @click="$emit('cerrar')" 
-            type="button" 
-            class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg"
-          >
+          <button @click="$emit('cerrar')" type="button" class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg">
             Cancelar
           </button>
         </div>
@@ -103,22 +78,10 @@
 import { ref, watch } from 'vue';
 
 const props = defineProps({
-  mostrar: {
-    type: Boolean,
-    required: true,
-  },
-  modo: {
-    type: String,
-    required: true,
-  },
-  nominaData: {
-    type: Object,
-    default: () => ({})
-  },
-  empleados: {
-    type: Array,
-    required: true
-  }
+  mostrar: { type: Boolean, required: true },
+  modo: { type: String, required: true, validator: (value) => ['crear', 'editar'].includes(value) },
+  nominaData: { type: Object, default: () => ({}) },
+  empleados: { type: Array, required: true }
 });
 
 const emit = defineEmits(['cerrar', 'guardar']);
@@ -126,19 +89,47 @@ const emit = defineEmits(['cerrar', 'guardar']);
 const formularioLocal = ref({});
 const errorFormulario = ref(null);
 
-watch(() => props.nominaData, (newData) => {
-  formularioLocal.value = { ...newData };
-  if (formularioLocal.value.fecha_pago) {
-    formularioLocal.value.fecha_pago = formularioLocal.value.fecha_pago.split('T')[0];
+// Inicializa el formulario cuando el modal se muestra o los datos cambian
+watch(() => props.mostrar, (newVal) => {
+  if (newVal) {
+    // Si es modo 'crear', inicializa con valores por defecto
+    if (props.modo === 'crear') {
+      const today = new Date();
+      formularioLocal.value = {
+        id_empleado: null,
+        mes: today.getMonth() + 1,
+        anio: today.getFullYear(),
+        salario_base: 0,
+        horas_extras: 0,
+        comisiones: 0,
+        isr: 0,
+        otros_descuentos: 0,
+      };
+    } else {
+      // Si es modo 'editar', carga los datos de la nómina existente
+      formularioLocal.value = { ...props.nominaData };
+    }
   }
-}, { deep: true, immediate: true });
+}, { immediate: true });
+
 
 const handleSubmit = () => {
-  if (!formularioLocal.value.id_empleado || !formularioLocal.value.fecha_pago || !formularioLocal.value.monto_bruto || !formularioLocal.value.deducciones || !formularioLocal.value.monto_neto) {
-    errorFormulario.value = 'Por favor, completa todos los campos obligatorios.';
+  // Validación básica
+  if (!formularioLocal.value.id_empleado || !formularioLocal.value.mes || !formularioLocal.value.anio || formularioLocal.value.salario_base === null || formularioLocal.value.salario_base < 0) {
+    errorFormulario.value = 'Empleado, Mes, Año y Salario Base son campos obligatorios.';
     return;
   }
-  emit('guardar', formularioLocal.value, props.modo);
+  
+  // Prepara el payload para enviar, asegurando que los opcionales sean 0 si están vacíos
+  const payload = {
+    ...formularioLocal.value,
+    horas_extras: formularioLocal.value.horas_extras || 0,
+    comisiones: formularioLocal.value.comisiones || 0,
+    isr: formularioLocal.value.isr || 0,
+    otros_descuentos: formularioLocal.value.otros_descuentos || 0,
+  };
+
+  emit('guardar', payload, props.modo);
   errorFormulario.value = null;
 };
 </script>
@@ -163,7 +154,7 @@ const handleSubmit = () => {
   box-shadow: 0 4px 16px rgba(102, 126, 234, 0.10), 0 1.5px 4px rgba(0,0,0,0.06);
   padding: 32px 24px;
   width: 100%;
-  max-width: 500px;
+  max-width: 600px; /* Aumentado para más campos */
   animation: modalIn 0.2s;
 }
 

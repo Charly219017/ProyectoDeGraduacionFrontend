@@ -8,25 +8,27 @@
       <table class="nominas-table">
         <thead>
           <tr>
-            <th>ID</th>
+            <th>Codigo</th>
             <th>Empleado</th>
-            <th>Fecha de Pago</th>
-            <th>Monto Bruto</th>
-            <th>Deducciones</th>
-            <th>Monto Neto</th>
+            <th>Período</th>
+            <th>Salario Base</th>
+            <th>Total Ingresos</th>
+            <th>Total Descuentos</th>
+            <th>Sueldo Líquido</th>
             <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="nomina in nominas" :key="nomina.id_nomina">
             <td>{{ nomina.id_nomina }}</td>
-            <td>{{ getEmpleadoNombre(nomina.id_empleado) }}</td>
-            <td>{{ new Date(nomina.fecha_pago).toLocaleDateString() }}</td>
-            <td>{{ nomina.monto_bruto }}</td>
-            <td>{{ nomina.deducciones }}</td>
-            <td>{{ nomina.monto_neto }}</td>
+            <td>{{ nomina.empleado ? nomina.empleado.nombre_completo : 'N/A' }}</td>
+            <td>{{ nomina.mes }}/{{ nomina.anio }}</td>
+            <td>{{ formatCurrency(nomina.salario_base) }}</td>
+            <td>{{ formatCurrency(nomina.total_ingresos) }}</td>
+            <td>{{ formatCurrency(nomina.total_descuentos) }}</td>
+            <td class="font-bold">{{ formatCurrency(nomina.sueldo_liquido) }}</td>
             <td>
-              <button class="btn-editar" @click="$emit('editar', nomina)">Editar</button>
+              <button class="btn-editar" @click="$emit('editar', nomina)" title="Editar Entradas">Editar</button>
               <button class="btn-eliminar" @click="$emit('eliminar', nomina.id_nomina)">Eliminar</button>
             </td>
           </tr>
@@ -40,15 +42,8 @@
 </template>
 
 <script setup>
-
-
-
 const props = defineProps({
   nominas: {
-    type: Array,
-    required: true,
-  },
-  empleados: {
     type: Array,
     required: true,
   },
@@ -58,11 +53,21 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['editar', 'eliminar']);
+defineEmits(['editar', 'eliminar']);
 
-const getEmpleadoNombre = (id_empleado) => {
-  const empleado = props.empleados.find(e => e.id_empleado === id_empleado);
-  return empleado ? empleado.nombre_completo : 'Desconocido';
+/**
+ * Formatea un número como moneda en Quetzales (GTQ).
+ * @param {number} value - El número a formatear.
+ * @returns {string} - El valor formateado como moneda.
+ */
+const formatCurrency = (value) => {
+  if (value === null || value === undefined) {
+    return 'Q 0.00';
+  }
+  return new Intl.NumberFormat('es-GT', {
+    style: 'currency',
+    currency: 'GTQ',
+  }).format(value);
 };
 </script>
 
@@ -101,6 +106,7 @@ const getEmpleadoNombre = (id_empleado) => {
 .nominas-table th, .nominas-table td {
   padding: 14px 18px;
   text-align: left;
+  white-space: nowrap; /* Evita que el texto se rompa en varias líneas */
 }
 
 .nominas-table th {
@@ -123,6 +129,11 @@ const getEmpleadoNombre = (id_empleado) => {
   color: #444;
   font-size: 14px;
   border-bottom: 1px solid #f0f0f0;
+}
+
+.nominas-table td.font-bold {
+    font-weight: 600;
+    color: #333;
 }
 
 .btn-editar {

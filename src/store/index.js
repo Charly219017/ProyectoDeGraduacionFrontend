@@ -5,9 +5,41 @@ import { ref, computed } from 'vue'
 import authService from '../services/auth.js'
 
 export const useAuthStore = defineStore('auth', () => {
+  // --- INICIO: Lógica de Inactividad ---
+  const INACTIVITY_TIMEOUT = 15 * 60 * 1000; // 15 minutos
+  let inactivityTimer = null;
+
+  const activityEvents = ['mousemove', 'mousedown', 'keypress', 'scroll', 'touchstart'];
+
+  const resetInactivityTimer = () => {
+    clearTimeout(inactivityTimer);
+    inactivityTimer = setTimeout(() => {
+      // Solo cerrar sesión si hay un token, para evitar bucles.
+      if (token.value) {
+        console.log("Cerrando sesión por inactividad.");
+        logout();
+      }
+    }, INACTIVITY_TIMEOUT);
+  };
+
+  const setupInactivityDetection = () => {
+    activityEvents.forEach(event => {
+      window.addEventListener(event, resetInactivityTimer);
+    });
+    resetInactivityTimer(); // Iniciar el temporizador la primera vez
+  };
+
+  const cleanupInactivityDetection = () => {
+    clearTimeout(inactivityTimer);
+    activityEvents.forEach(event => {
+      window.removeEventListener(event, resetInactivityTimer);
+    });
+  };
+  // --- FIN: Lógica de Inactividad ---
+
   // Estado
   const usuario = ref(null)
-  const token = ref(localStorage.getItem('token') || null)
+  const token = ref(sessionStorage.getItem('token') || null) // <--- CAMBIO
   const cargando = ref(false)
   const error = ref(null)
 
@@ -26,11 +58,13 @@ export const useAuthStore = defineStore('auth', () => {
       
       const respuestaToken = await authService.login(credenciales)
       token.value = respuestaToken.token
-      localStorage.setItem('token', respuestaToken.token)
+      sessionStorage.setItem('token', respuestaToken.token) // <--- CAMBIO
       
       const respuestaUsuario = await authService.obtenerPerfil()
       usuario.value = respuestaUsuario.usuario
-      localStorage.setItem('usuario', JSON.stringify(respuestaUsuario.usuario))
+      sessionStorage.setItem('usuario', JSON.stringify(respuestaUsuario.usuario)) // <--- CAMBIO
+
+      setupInactivityDetection(); // <--- AÑADIDO
 
       return { exito: true }
     } catch (err) {
@@ -43,38 +77,42 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   const logout = () => {
+    cleanupInactivityDetection(); 
     token.value = null
     usuario.value = null
     error.value = null
-    localStorage.removeItem('token')
-    localStorage.removeItem('usuario')
+    sessionStorage.removeItem('token') 
+    sessionStorage.removeItem('usuario') 
   }
 
   const cargarSesion = async () => {
-    const tokenGuardado = localStorage.getItem('token');
+    const tokenGuardado = sessionStorage.getItem('token'); 
     token.value = tokenGuardado;
 
     if (!tokenGuardado) {
       return; // No hay sesión que cargar
     }
 
-    const usuarioGuardado = localStorage.getItem('usuario');
+    // Si hay token, iniciamos el detector de inactividad
+    setupInactivityDetection(); // <--- AÑADIDO
+
+    const usuarioGuardado = sessionStorage.getItem('usuario'); // <--- CAMBIO
     if (usuarioGuardado && usuarioGuardado !== 'undefined' && usuarioGuardado !== 'null') {
       try {
         usuario.value = JSON.parse(usuarioGuardado);
-        return; // Carga exitosa desde localStorage
+        return; // Carga exitosa desde sessionStorage
       } catch (e) {
-        console.error("Datos de usuario corruptos en localStorage, limpiando.", e);
-        localStorage.removeItem('usuario'); // Limpiar datos erróneos
+        console.error("Datos de usuario corruptos en sessionStorage, limpiando.", e);
+        sessionStorage.removeItem('usuario'); // <--- CAMBIO
       }
     }
 
-    // Si no hay usuario en localStorage o los datos estaban corruptos, obtener de la API
+    // Si no hay usuario en sessionStorage o los datos estaban corruptos, obtener de la API
     try {
-      console.log("No hay usuario en localStorage, obteniendo perfil desde la API...");
+      console.log("No hay usuario en sessionStorage, obteniendo perfil desde la API...");
       const respuestaUsuario = await authService.obtenerPerfil();
       usuario.value = respuestaUsuario.usuario;
-      localStorage.setItem('usuario', JSON.stringify(respuestaUsuario.usuario));
+      sessionStorage.setItem('usuario', JSON.stringify(respuestaUsuario.usuario)); // <--- CAMBIO
     } catch (err) {
       console.error("Fallo al obtener el perfil del usuario, cerrando sesión.", err);
       logout(); // El token probablemente es inválido

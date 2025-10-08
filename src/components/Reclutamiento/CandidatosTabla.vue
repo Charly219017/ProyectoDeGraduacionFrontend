@@ -7,7 +7,7 @@
       <table class="candidatos-table">
         <thead>
           <tr>
-            <th>ID</th>
+            <th>Codigo</th>
             <th>Nombre Completo</th>
             <th>Correo Electrónico</th>
             <th>Teléfono</th>

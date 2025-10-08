@@ -8,7 +8,7 @@
       <table class="carreras-table">
         <thead>
           <tr>
-            <th>ID</th>
+            <th>codigo</th>
             <th>Nombre</th>
             <th>Acciones</th>
           </tr>

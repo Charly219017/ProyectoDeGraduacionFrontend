@@ -8,7 +8,7 @@
       <table class="vacantes-table">
         <thead>
           <tr>
-            <th>ID</th>
+            <th>Codigo</th>
             <th>Nombre</th>
             <th>Puesto</th>
             <th>Fecha de Publicación</th>

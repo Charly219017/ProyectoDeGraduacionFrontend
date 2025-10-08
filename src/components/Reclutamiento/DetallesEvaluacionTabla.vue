@@ -7,11 +7,10 @@
       <table class="detalles-evaluacion-table">
         <thead>
           <tr>
-            <th>ID</th>
+            <th>Codigo</th>
             <th>Evaluación</th>
             <th>Criterio</th>
             <th>Puntuación</th>
-            <th>Comentarios</th>
             <th>Acciones</th>
           </tr>
         </thead>
@@ -21,7 +20,6 @@
             <td>Evaluación #{{ detalle.id_evaluacion }}</td>
             <td>{{ getCriterioNombre(detalle.id_criterio) }}</td>
             <td>{{ detalle.puntuacion }}</td>
-            <td>{{ detalle.comentarios }}</td>
             <td>
               <button class="btn-editar" @click="$emit('editar', detalle)">Editar</button>
               <button class="btn-eliminar" @click="$emit('eliminar', detalle.id_detalle_evaluacion)">Eliminar</button>

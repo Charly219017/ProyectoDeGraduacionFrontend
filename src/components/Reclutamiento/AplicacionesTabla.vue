@@ -7,7 +7,7 @@
       <table class="aplicaciones-table">
         <thead>
           <tr>
-            <th>ID</th>
+            <th>Codigo</th>
             <th>Vacante</th>
             <th>Candidato</th>
             <th>Fecha de Aplicación</th>

@@ -8,25 +8,25 @@
         @click="abrirFormulario('crear')"
         class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300"
       >
-        + Nueva Nómina
+        + Generar Nómina
       </button>
     </div>
 
     <nominas-tabla 
       :nominas="nominas" 
-      :empleados="empleados"
       :cargando="cargando"
       @editar="abrirFormulario('editar', $event)" 
-      @eliminar="eliminarNomina"
+      @eliminar="handleEliminarNomina"
     />
 
     <nomina-form-modal
+      v-if="mostrarModal"
       :mostrar="mostrarModal"
       :modo="modoFormulario"
-      :nomina-data="formulario"
+      :nomina-data="nominaSeleccionada"
       :empleados="empleados"
       @cerrar="cerrarModal"
-      @guardar="guardarNomina"
+      @guardar="handleGuardarNomina"
     />
   </div>
 </template>
@@ -35,37 +35,28 @@
 import { ref, onMounted } from 'vue';
 import NominasTabla from '../components/Nomina/NominasTabla.vue';
 import NominaFormModal from '../components/Nomina/NominaFormModal.vue';
-import NominaService from '../services/nomina.js';
-import EmpleadoService from '../services/empleados.js';
-import { useAuthStore } from '../store/index.js';
+import nominaService from '../services/nomina.js';
+import empleadoService from '../services/empleados.js';
 
 const nominas = ref([]);
 const empleados = ref([]);
 const cargando = ref(true);
 const mostrarModal = ref(false);
 const modoFormulario = ref('crear');
+const nominaSeleccionada = ref(null);
 
-const authStore = useAuthStore();
-const formulario = ref({
-  id_nomina: null,
-  id_empleado: null,
-  fecha_pago: '',
-  monto_bruto: 0,
-  deducciones: 0,
-  monto_neto: 0
-});
-
-const obtenerDatos = async () => {
+const cargarDatos = async () => {
   cargando.value = true;
   try {
     const [nominasData, empleadosData] = await Promise.all([
-      NominaService.obtenerNominas(),
-      EmpleadoService.obtenerTodosEmpleados()
+      nominaService.obtenerNominas(),
+      empleadoService.obtenerTodosEmpleados()
     ]);
     nominas.value = nominasData;
     empleados.value = empleadosData;
   } catch (error) {
-    console.error('Error al obtener datos iniciales:', error);
+    console.error('Error al obtener datos:', error);
+    alert('No se pudieron cargar los datos. Por favor, intente de nuevo.');
   } finally {
     cargando.value = false;
   }
@@ -73,54 +64,44 @@ const obtenerDatos = async () => {
 
 const abrirFormulario = (modo, nomina = null) => {
   modoFormulario.value = modo;
-  if (modo === 'crear') {
-    formulario.value = {
-      id_nomina: null,
-      id_empleado: null,
-      fecha_pago: '',
-      monto_bruto: 0,
-      deducciones: 0,
-      monto_neto: 0
-    };
-  } else {
-    formulario.value = { ...nomina };
-  }
+  nominaSeleccionada.value = nomina;
   mostrarModal.value = true;
 };
 
 const cerrarModal = () => {
   mostrarModal.value = false;
+  nominaSeleccionada.value = null;
 };
 
-const guardarNomina = async (datosNomina, modo) => {
-  const usuarioActualId = authStore.usuario?.id_usuario;
+const handleGuardarNomina = async (datosNomina) => {
   try {
-    if (modo === 'crear') {
-      await NominaService.crearNomina(datosNomina, usuarioActualId);
+    if (modoFormulario.value === 'crear') {
+      await nominaService.crearNomina(datosNomina);
     } else {
-      await NominaService.actualizarNomina(datosNomina.id_nomina, datosNomina, usuarioActualId);
+      await nominaService.actualizarNomina(datosNomina.id_nomina, datosNomina);
     }
-    await obtenerDatos();
+    await cargarDatos();
     cerrarModal();
   } catch (error) {
-    window.alert(`Error al guardar la nómina: ${error.message}`);
+    console.error('Error al guardar la nómina:', error);
+    alert(`Error al guardar la nómina: ${error.response?.data?.mensaje || error.message}`);
   }
 };
 
-const eliminarNomina = async (id) => {
-  if (window.confirm('¿Estás seguro de que deseas eliminar esta nómina?')) {
-    const usuarioActualId = authStore.usuario?.id_usuario;
+const handleEliminarNomina = async (id) => {
+  if (window.confirm('¿Está seguro de que desea eliminar este registro de nómina?')) {
     try {
-      await NominaService.eliminarNomina(id, usuarioActualId);
-      await obtenerDatos();
+      await nominaService.eliminarNomina(id);
+      await cargarDatos();
     } catch (error) {
-      window.alert(`Error al eliminar la nómina: ${error.message}`);
+      console.error('Error al eliminar la nómina:', error);
+      alert(`Error al eliminar la nómina: ${error.response?.data?.mensaje || error.message}`);
     }
   }
 };
 
 onMounted(() => {
-  obtenerDatos();
+  cargarDatos();
 });
 </script>
 

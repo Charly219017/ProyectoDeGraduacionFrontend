@@ -8,7 +8,7 @@
       <table class="contratos-table">
         <thead>
           <tr>
-            <th>ID</th>
+            <th>Codigo</th>
             <th>Puesto</th>
             <th>Fecha de Inicio</th>
             <th>Fecha de Fin</th>
