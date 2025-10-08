@@ -275,7 +275,7 @@ class ReclutamientoService {
       if (id_evaluacion) {
         params.id_evaluacion = id_evaluacion;
       }
-      const response = await this.axiosInstance.get('/detalles-evaluacion/obtenerdetalleevaluacion', { params });
+      const response = await this.axiosInstance.get('/detalles_evaluacion/obtenerdetalleevaluacion', { params });
       return response.data;
     } catch (error) {
       console.error('Error al obtener detalles de evaluación:', error);
@@ -285,7 +285,7 @@ class ReclutamientoService {
 
   async obtenerDetalleEvaluacionPorId(id_detalle) {
     try {
-      const response = await this.axiosInstance.get(`/detalles-evaluacion/${id_detalle}`);
+      const response = await this.axiosInstance.get(`/detalles_evaluacion/${id_detalle}`);
       return response.data;
     } catch (error) {
       console.error(`Error al obtener el detalle de evaluacion con ID ${id_detalle}:`, error);
@@ -295,7 +295,7 @@ class ReclutamientoService {
 
   async crearDetalleEvaluacion(datosDetalleEvaluacion) {
     try {
-      const response = await this.axiosInstance.post('/detalles-evaluacion/creardetalleevaluacion', datosDetalleEvaluacion);
+      const response = await this.axiosInstance.post('/detalles_evaluacion/creardetalleevaluacion', datosDetalleEvaluacion);
       return response.data;
     } catch (error) {
       console.error('Error al crear detalle de evaluación:', error);
@@ -305,7 +305,7 @@ class ReclutamientoService {
 
   async actualizarDetalleEvaluacion(id_detalle, datosActualizados) {
     try {
-      const response = await this.axiosInstance.put(`/detalles-evaluacion/${id_detalle}`, datosActualizados);
+      const response = await this.axiosInstance.put(`/detalles_evaluacion/${id_detalle}`, datosActualizados);
       return response.data;
     } catch (error) {
       console.error('Error al actualizar detalle de evaluación:', error);
@@ -315,7 +315,7 @@ class ReclutamientoService {
 
   async eliminarDetalleEvaluacion(id_detalle) {
     try {
-      await this.axiosInstance.delete(`/detalles-evaluacion/${id_detalle}`);
+      await this.axiosInstance.delete(`/detalles_evaluacion/${id_detalle}`);
     } catch (error) {
       console.error('Error al eliminar detalle de evaluación:', error);
       throw error;
