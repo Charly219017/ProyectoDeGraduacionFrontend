@@ -7,7 +7,7 @@ function getAuthHeader() {
   return { Authorization: `Bearer ${token}` };
 }
 
-export const obtenerActividadesBienestar = async () => {
+export const obtenerTodasActividadesBienestar = async () => {
   try {
     const response = await axios.get(`${API_BASE_URL}/bienestar/obtenertodo-bienestar`, { headers: getAuthHeader() });
     return response.data;
@@ -28,9 +28,9 @@ export const crearActividadBienestar = async (datosActividad, auditor) => {
   }
 };
 
-export const obtenerActividadBienestarPorId = async (id) => {
+export const obtenerActividadBienestarPorId = async (id_bienestar) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/bienestar/obtener/${id}`, { headers: getAuthHeader() });
+    const response = await axios.get(`${API_BASE_URL}/bienestar/obtener/${id_bienestar}`, { headers: getAuthHeader() });
     return response.data;
   } catch (error) {
     console.error(`Error al obtener la actividad de bienestar con ID ${id}:`, error);
@@ -38,10 +38,10 @@ export const obtenerActividadBienestarPorId = async (id) => {
   }
 };
 
-export const actualizarActividadBienestar = async (id, datosActualizados, auditor) => {
+export const actualizarActividadBienestar = async (id_bienestar, datosActualizados, auditor) => {
   try {
     const payload = { ...datosActualizados, auditor };
-    const response = await axios.put(`${API_BASE_URL}/bienestar/actualizar/${id}`, payload, { headers: getAuthHeader() });
+    const response = await axios.put(`${API_BASE_URL}/bienestar/actualizar/${id_bienestar}`, payload, { headers: getAuthHeader() });
     return response.data;
   } catch (error) {
     console.error('Error al actualizar actividad de bienestar:', error);
@@ -49,9 +49,9 @@ export const actualizarActividadBienestar = async (id, datosActualizados, audito
   }
 };
 
-export const eliminarActividadBienestar = async (id, auditor) => {
+export const eliminarActividadBienestar = async (id_bienestar, auditor) => {
   try {
-    await axios.delete(`${API_BASE_URL}/bienestar/eliminar/${id}`, {
+    await axios.delete(`${API_BASE_URL}/bienestar/eliminar/${id_bienestar}`, {
       headers: getAuthHeader(),
       data: { auditor }
     });
