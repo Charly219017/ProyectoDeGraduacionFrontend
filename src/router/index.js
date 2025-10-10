@@ -7,6 +7,8 @@ import MantenimientoUsuarios from '../views/MantenimientoUsuarios.vue'
 import empleadosRoutes from './empleados.js';
 import reclutamientoRoutes from './reclutamientoRutas.js';
 import nominaRoutes from './nominaRutas.js';
+import bienestarRoutes from './bienestarRutas.js';
+import reportesRutas from './reportesRutas.js';
 
 // Importa tu servicio de autenticación
 import authService from '../services/auth'
@@ -31,7 +33,7 @@ const rutasPrincipales = [
 ]
 
 // Unimos todas las rutas en un solo array
-const rutas = [...rutasPrincipales, ...rutasMantenimiento, ...empleadosRoutes, ...reclutamientoRoutes, ...nominaRoutes]
+const rutas = [...rutasPrincipales, ...rutasMantenimiento, ...empleadosRoutes, ...reclutamientoRoutes, ...nominaRoutes, ...bienestarRoutes, ...reportesRutas]
 
 const router = createRouter({
   history: createWebHistory(),
@@ -40,7 +42,7 @@ const router = createRouter({
 
 // Guardia de navegación para autenticación mejorada
 router.beforeEach(async (to, from, next) => {
-  const token = localStorage.getItem('token')
+  const token = sessionStorage.getItem('token')
   const requiereAutenticacion = to.meta.requiereAutenticacion
 
   // Caso 1: La ruta requiere autenticación.

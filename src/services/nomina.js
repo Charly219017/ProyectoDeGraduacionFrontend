@@ -8,7 +8,7 @@ class NominaService {
     });
 
     this.axiosInstance.interceptors.request.use((config) => {
-      const token = localStorage.getItem('token');
+      const token = sessionStorage.getItem('token');
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -68,6 +68,45 @@ class NominaService {
       });
     } catch (error) {
       console.error('Error al eliminar nómina:', error);
+      throw error;
+    }
+  }
+
+  async imprimirNomina(id) {
+    try {
+      const response = await this.axiosInstance.get(`/nomina/${id}/imprimir`, {
+        responseType: 'blob', // Importante para manejar la respuesta como un archivo
+      });
+
+      // Crear una URL para el blob y iniciar la descarga
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      
+      // Opcional: intentar obtener el nombre del archivo de las cabeceras
+      const contentDisposition = response.headers['content-disposition'];
+      let filename = 'recibo_nomina.pdf';
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename="?(.+)"?/);
+        if (filenameMatch.length > 1) {
+          filename = filenameMatch[1];
+        }
+      }
+      
+      link.setAttribute('download', filename);
+      document.body.appendChild(link);
+      link.click();
+      
+      // Limpiar
+      link.parentNode.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+    } catch (error) {
+      console.error(`Error al imprimir la nómina con ID ${id}:`, error);
+      // Si el error es por acceso prohibido, se puede notificar al usuario
+      if (error.response && error.response.status === 403) {
+        alert('No tiene permiso para realizar esta acción.');
+      }
       throw error;
     }
   }

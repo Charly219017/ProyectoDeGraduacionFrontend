@@ -17,7 +17,7 @@
         </thead>
         <tbody>
           <tr v-for="actividad in actividades" :key="actividad.id_actividad">
-            <td>{{ actividad.id_bienstar }}</td>
+            <td>{{ actividad.id_bienestar }}</td>
             <td>{{ actividad.nombre_actividad }}</td>
             <td>{{ actividad.descripcion }}</td>
             <td>{{ new Date(actividad.fecha).toLocaleDateString() }}</td>

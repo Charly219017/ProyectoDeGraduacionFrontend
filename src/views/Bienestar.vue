@@ -34,7 +34,7 @@ import { ref, onMounted } from 'vue';
 import ActividadesList from '../components/Bienestar/ActividadesList.vue';
 import ActividadFormModal from '../components/Bienestar/ActividadFormModal.vue';
 import { 
-  obtenerActividadesBienestar, 
+  obtenerTodasActividadesBienestar, 
   crearActividadBienestar, 
   actualizarActividadBienestar, 
   eliminarActividadBienestar as eliminarActividadApi
@@ -57,7 +57,7 @@ const formulario = ref({
 const obtenerDatos = async () => {
   cargando.value = true;
   try {
-    const respuesta = await obtenerActividadesBienestar();
+    const respuesta = await obtenerTodasActividadesBienestar();
     actividades.value = respuesta;
   } catch (error) {
     console.error('Error al obtener actividades:', error);
@@ -86,12 +86,11 @@ const cerrarModal = () => {
 };
 
 const guardarActividad = async (datosActividad, modo) => {
-  const usuarioActualId = authStore.usuario?.id_usuario;
   try {
     if (modo === 'crear') {
-      await crearActividadBienestar(datosActividad, usuarioActualId);
+      await crearActividadBienestar(datosActividad);
     } else {
-      await actualizarActividadBienestar(datosActividad.id_actividad, datosActividad, usuarioActualId);
+      await actualizarActividadBienestar(datosActividad.id_actividad, datosActividad);
     }
     await obtenerDatos();
     cerrarModal();
@@ -102,9 +101,8 @@ const guardarActividad = async (datosActividad, modo) => {
 
 const eliminarActividad = async (id) => {
   if (window.confirm('¿Estás seguro de que deseas eliminar esta actividad?')) {
-    const usuarioActualId = authStore.usuario?.id_usuario;
     try {
-      await eliminarActividadApi(id, usuarioActualId);
+      await eliminarActividadApi(id);
       await obtenerDatos();
     } catch (error) {
       window.alert(`Error al eliminar la actividad: ${error.message}`);

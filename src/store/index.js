@@ -61,8 +61,8 @@ export const useAuthStore = defineStore('auth', () => {
       sessionStorage.setItem('token', respuestaToken.token) // <--- CAMBIO
       
       const respuestaUsuario = await authService.obtenerPerfil()
-      usuario.value = respuestaUsuario.usuario
-      sessionStorage.setItem('usuario', JSON.stringify(respuestaUsuario.usuario)) // <--- CAMBIO
+      usuario.value = respuestaUsuario
+      sessionStorage.setItem('usuario', JSON.stringify(respuestaUsuario)) // <--- CAMBIO
 
       setupInactivityDetection(); // <--- AÑADIDO
 

@@ -17,6 +17,7 @@
       :cargando="cargando"
       @editar="abrirFormulario('editar', $event)" 
       @eliminar="handleEliminarNomina"
+      @imprimir="handleImprimirNomina"
     />
 
     <nomina-form-modal
@@ -96,6 +97,18 @@ const handleEliminarNomina = async (id) => {
     } catch (error) {
       console.error('Error al eliminar la nómina:', error);
       alert(`Error al eliminar la nómina: ${error.response?.data?.mensaje || error.message}`);
+    }
+  }
+};
+
+const handleImprimirNomina = async (id) => {
+  try {
+    await nominaService.imprimirNomina(id);
+  } catch (error) {
+    console.error('Error al imprimir la nómina:', error);
+    // La alerta de error específica (ej. 403) se maneja dentro del servicio.
+    if (error.response?.status !== 403) {
+      alert(`Error al generar el PDF: ${error.response?.data?.mensaje || error.message}`);
     }
   }
 };

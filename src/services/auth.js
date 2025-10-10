@@ -10,7 +10,7 @@ class AuthService {
     // Interceptor to add the token to requests
     this.api.interceptors.request.use(
       (config) => {
-        const token = localStorage.getItem('token');
+        const token = sessionStorage.getItem('token');
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         }
@@ -26,8 +26,8 @@ class AuthService {
       (response) => response,
       (error) => {
         if (error.response?.status === 401) {
-          localStorage.removeItem('token');
-          localStorage.removeItem('usuario');
+          sessionStorage.removeItem('token');
+          sessionStorage.removeItem('usuario');
           window.location.href = '/login';
         }
         return Promise.reject(error);

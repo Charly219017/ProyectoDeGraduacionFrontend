@@ -2,7 +2,16 @@
 // frontend/src/componentes/Nomina/NominasTabla.vue
 <template>
   <div class="nominas-card">
-    <h2 class="nominas-title">Lista de Nóminas</h2>
+    <div class="header-container">
+      <h2 class="nominas-title">Lista de Nóminas</h2>
+      <button 
+        class="btn-imprimir-todos" 
+        @click="imprimirTodas" 
+        :disabled="true"
+        title="Funcionalidad pendiente de implementación en el backend">
+        Imprimir Todas
+      </button>
+    </div>
     <div v-if="cargando" class="nominas-empty">Cargando nóminas...</div>
     <div v-else-if="nominas.length > 0" class="nominas-table-container">
       <table class="nominas-table">
@@ -27,8 +36,9 @@
             <td>{{ formatCurrency(nomina.total_ingresos) }}</td>
             <td>{{ formatCurrency(nomina.total_descuentos) }}</td>
             <td class="font-bold">{{ formatCurrency(nomina.sueldo_liquido) }}</td>
-            <td>
+            <td class="acciones-cell">
               <button class="btn-editar" @click="$emit('editar', nomina)" title="Editar Entradas">Editar</button>
+              <button class="btn-imprimir" @click="$emit('imprimir', nomina.id_nomina)" title="Imprimir Recibo">Imprimir</button>
               <button class="btn-eliminar" @click="$emit('eliminar', nomina.id_nomina)">Eliminar</button>
             </td>
           </tr>
@@ -53,7 +63,12 @@ const props = defineProps({
   },
 });
 
-defineEmits(['editar', 'eliminar']);
+defineEmits(['editar', 'eliminar', 'imprimir']);
+
+const imprimirTodas = () => {
+  // TODO: Implementar cuando el backend para impresión por lote esté listo.
+  console.log('La funcionalidad de imprimir todas las nóminas aún no está implementada.');
+};
 
 /**
  * Formatea un número como moneda en Quetzales (GTQ).
@@ -81,12 +96,39 @@ const formatCurrency = (value) => {
   max-width: 100%;
 }
 
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
 .nominas-title {
   color: #333;
   font-size: 24px;
   font-weight: 600;
-  margin-bottom: 24px;
-  text-align: center;
+  margin: 0; /* Ajustado para alinear con el botón */
+}
+
+.btn-imprimir-todos {
+  background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-imprimir-todos:hover {
+  background: linear-gradient(135deg, #2f855a 0%, #276749 100%);
+}
+
+.btn-imprimir-todos:disabled {
+  background: #a0aec0;
+  cursor: not-allowed;
 }
 
 .nominas-table-container {
@@ -106,7 +148,7 @@ const formatCurrency = (value) => {
 .nominas-table th, .nominas-table td {
   padding: 14px 18px;
   text-align: left;
-  white-space: nowrap; /* Evita que el texto se rompa en varias líneas */
+  white-space: nowrap;
 }
 
 .nominas-table th {
@@ -136,33 +178,40 @@ const formatCurrency = (value) => {
     color: #333;
 }
 
-.btn-editar {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+.acciones-cell {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-editar, .btn-imprimir, .btn-eliminar {
   color: white;
   border: none;
   border-radius: 6px;
   padding: 6px 16px;
   font-size: 13px;
   font-weight: 600;
-  margin-right: 8px;
   cursor: pointer;
   transition: background 0.2s;
+}
+
+.btn-editar {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
 .btn-editar:hover {
   background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
 }
 
+.btn-imprimir {
+  background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
+}
+
+.btn-imprimir:hover {
+  background: linear-gradient(135deg, #2b6cb0 0%, #2c5282 100%);
+}
+
 .btn-eliminar {
   background: linear-gradient(135deg, #f56565 0%, #c53030 100%);
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 6px 16px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s;
 }
 
 .btn-eliminar:hover {
