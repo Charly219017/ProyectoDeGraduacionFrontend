@@ -4,13 +4,6 @@
   <div class="nominas-card">
     <div class="header-container">
       <h2 class="nominas-title">Lista de Nóminas</h2>
-      <button 
-        class="btn-imprimir-todos" 
-        @click="imprimirTodas" 
-        :disabled="true"
-        title="Funcionalidad pendiente de implementación en el backend">
-        Imprimir Todas
-      </button>
     </div>
     <div v-if="cargando" class="nominas-empty">Cargando nóminas...</div>
     <div v-else-if="nominas.length > 0" class="nominas-table-container">

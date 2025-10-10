@@ -6,7 +6,7 @@ const reportesRutas = [
     path: '/reportes',
     name: 'Reportes',
     component: Reportes,
-    meta: { requiresAuth: true } // Suponiendo que se requiere autenticación
+    meta: { requiereAutenticacion: true } // Suponiendo que se requiere autenticación
   }
 ];
 

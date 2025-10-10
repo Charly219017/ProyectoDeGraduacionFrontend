@@ -1,13 +1,32 @@
 <template>
-  <Bar :data="chartData" :options="chartOptions" />
+  <Line :data="chartData" :options="chartOptions" />
 </template>
 
 <script setup>
 import { computed } from 'vue';
-import { Bar } from 'vue-chartjs';
-import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js';
+import { Line } from 'vue-chartjs';
+import {
+  Chart as ChartJS,
+  Title,
+  Tooltip,
+  Legend,
+  LineElement,
+  PointElement,
+  CategoryScale,
+  LinearScale,
+  Filler,
+} from 'chart.js';
 
-ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
+ChartJS.register(
+  Title,
+  Tooltip,
+  Legend,
+  LineElement,
+  PointElement,
+  CategoryScale,
+  LinearScale,
+  Filler
+);
 
 const props = defineProps({
   promedioDesempeno: {
@@ -17,11 +36,14 @@ const props = defineProps({
 });
 
 const chartData = computed(() => ({
-  labels: props.promedioDesempeno.map(item => item['empleado.puesto.nombre_puesto'] || 'Puesto no especificado'),
+  labels: props.promedioDesempeno.map(item => item.nombre_puesto),
   datasets: [
     {
       label: 'Puntuación Promedio',
-      backgroundColor: '#ed8936',
+      borderColor: '#fb923c',
+      backgroundColor: 'rgba(251, 146, 60, 0.2)',
+      fill: true,
+      tension: 0.4,
       data: props.promedioDesempeno.map(item => parseFloat(item.promedio_puntuacion).toFixed(2)),
     },
   ],
@@ -30,7 +52,6 @@ const chartData = computed(() => ({
 const chartOptions = {
   responsive: true,
   maintainAspectRatio: false,
-  indexAxis: 'y',
   plugins: {
     legend: {
       display: false,
@@ -44,9 +65,8 @@ const chartOptions = {
     },
   },
   scales: {
-    x: {
+    y: {
       beginAtZero: true,
-      max: 100, // Asumiendo que la puntuación es sobre 100
     },
   },
 };

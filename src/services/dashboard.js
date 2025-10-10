@@ -21,7 +21,7 @@ class DashboardService {
   async obtenerEstadisticas() {
     try {
       const response = await this.axiosInstance.get('/dashboardestadisticas');
-      return response.data;
+      return response.data.estadisticas;
     } catch (error) {
       console.error('Error al cargar estadísticas:', error);
       throw error;

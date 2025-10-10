@@ -70,10 +70,10 @@ const abrirFormulario = (modo, actividad = null) => {
   modoFormulario.value = modo;
   if (modo === 'crear') {
     formulario.value = {
-      id_actividad: null,
+      id_bienestar: null,
       nombre_actividad: '',
       descripcion: '',
-      fecha: ''
+      fecha_actividad: ''
     };
   } else {
     formulario.value = { ...actividad };
@@ -90,7 +90,7 @@ const guardarActividad = async (datosActividad, modo) => {
     if (modo === 'crear') {
       await crearActividadBienestar(datosActividad);
     } else {
-      await actualizarActividadBienestar(datosActividad.id_actividad, datosActividad);
+      await actualizarActividadBienestar(datosActividad.id_bienestar, datosActividad);
     }
     await obtenerDatos();
     cerrarModal();

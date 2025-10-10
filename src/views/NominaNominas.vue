@@ -4,12 +4,20 @@
   <div class="nomina-nominas-container">
     <div class="nomina-header">
       <h1 class="text-3xl font-bold text-gray-800">Gestión de Nóminas</h1>
-      <button 
-        @click="abrirFormulario('crear')"
-        class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300"
-      >
-        + Generar Nómina
-      </button>
+      <div>
+        <button 
+          @click="abrirLoteImpresionModal"
+          class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 mr-4"
+        >
+          Imprimir por Lote
+        </button>
+        <button 
+          @click="abrirFormulario('crear')"
+          class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300"
+        >
+          + Generar Nómina
+        </button>
+      </div>
     </div>
 
     <nominas-tabla 
@@ -29,6 +37,13 @@
       @cerrar="cerrarModal"
       @guardar="handleGuardarNomina"
     />
+
+    <lote-impresion-modal
+      v-if="mostrarLoteImpresionModal"
+      :mostrar="mostrarLoteImpresionModal"
+      @cerrar="cerrarLoteImpresionModal"
+      @imprimir="handleImprimirLote"
+    />
   </div>
 </template>
 
@@ -36,6 +51,7 @@
 import { ref, onMounted } from 'vue';
 import NominasTabla from '../components/Nomina/NominasTabla.vue';
 import NominaFormModal from '../components/Nomina/NominaFormModal.vue';
+import LoteImpresionModal from '../components/Nomina/LoteImpresionModal.vue';
 import nominaService from '../services/nomina.js';
 import empleadoService from '../services/empleados.js';
 
@@ -43,6 +59,7 @@ const nominas = ref([]);
 const empleados = ref([]);
 const cargando = ref(true);
 const mostrarModal = ref(false);
+const mostrarLoteImpresionModal = ref(false);
 const modoFormulario = ref('crear');
 const nominaSeleccionada = ref(null);
 
@@ -72,6 +89,14 @@ const abrirFormulario = (modo, nomina = null) => {
 const cerrarModal = () => {
   mostrarModal.value = false;
   nominaSeleccionada.value = null;
+};
+
+const abrirLoteImpresionModal = () => {
+  mostrarLoteImpresionModal.value = true;
+};
+
+const cerrarLoteImpresionModal = () => {
+  mostrarLoteImpresionModal.value = false;
 };
 
 const handleGuardarNomina = async (datosNomina) => {
@@ -106,9 +131,21 @@ const handleImprimirNomina = async (id) => {
     await nominaService.imprimirNomina(id);
   } catch (error) {
     console.error('Error al imprimir la nómina:', error);
-    // La alerta de error específica (ej. 403) se maneja dentro del servicio.
     if (error.response?.status !== 403) {
       alert(`Error al generar el PDF: ${error.response?.data?.mensaje || error.message}`);
+    }
+  }
+};
+
+const handleImprimirLote = async ({ mes, anio }) => {
+  try {
+    await nominaService.imprimirNominasPorLote(mes, anio);
+    cerrarLoteImpresionModal();
+  } catch (error) {
+    console.error('Error al imprimir las nóminas por lote:', error);
+    // The service already shows an alert for 404 errors
+    if (error.response?.status !== 404) {
+      alert(`Error al generar el PDF por lote: ${error.response?.data?.mensaje || error.message}`);
     }
   }
 };

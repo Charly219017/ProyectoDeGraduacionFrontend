@@ -1,4 +1,3 @@
-
 // frontend/src/componentes/Bienestar/ActividadFormModal.vue
 <template>
   <div v-if="mostrar" class="modal-overlay">
@@ -25,11 +24,11 @@
           ></textarea>
         </div>
         <div class="form-group">
-          <label for="fecha">Fecha</label>
+          <label for="fecha_actividad">Fecha</label>
           <input 
             type="date" 
-            id="fecha" 
-            v-model="formularioLocal.fecha" 
+            id="fecha_actividad" 
+            v-model="formularioLocal.fecha_actividad" 
             required 
             class="w-full px-3 py-2 border rounded-md"
           >
@@ -82,17 +81,28 @@ const errorFormulario = ref(null);
 
 watch(() => props.actividadData, (newData) => {
   formularioLocal.value = { ...newData };
-  if (formularioLocal.value.fecha) {
-    formularioLocal.value.fecha = formularioLocal.value.fecha.split('T')[0];
+  if (formularioLocal.value.fecha_actividad) {
+    formularioLocal.value.fecha_actividad = formularioLocal.value.fecha_actividad.split('T')[0];
   }
 }, { deep: true, immediate: true });
 
 const handleSubmit = () => {
-  if (!formularioLocal.value.nombre_actividad || !formularioLocal.value.fecha) {
+  if (!formularioLocal.value.nombre_actividad || !formularioLocal.value.fecha_actividad) {
     errorFormulario.value = 'Por favor, completa todos los campos obligatorios.';
     return;
   }
-  emit('guardar', formularioLocal.value, props.modo);
+
+  // Adjust the date to avoid timezone issues
+  const date = new Date(formularioLocal.value.fecha_actividad);
+  const userTimezoneOffset = date.getTimezoneOffset() * 60000;
+  const adjustedDate = new Date(date.getTime() + userTimezoneOffset);
+
+  const dataToSave = {
+    ...formularioLocal.value,
+    fecha_actividad: adjustedDate.toISOString(),
+  };
+
+  emit('guardar', dataToSave, props.modo);
   errorFormulario.value = null;
 };
 </script>

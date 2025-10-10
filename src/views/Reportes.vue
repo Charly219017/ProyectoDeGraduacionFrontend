@@ -1,254 +1,146 @@
 <template>
   <div class="reportes-container">
-    <header class="reportes-header">
-      <h1>Módulo de Reportería</h1>
-      <p>Visualiza estadísticas y exporta datos clave del sistema.</p>
-    </header>
-
-    <div v-if="error" class="error-alert">
-      {{ error }}
-    </div>
-
-    <!-- Sección de Acciones -->
-    <div class="actions-card">
-      <h2>Acciones Rápidas</h2>
-      <button @click="exportarCSV" :disabled="exportando" class="btn-export">
-        {{ exportando ? 'Exportando...' : 'Exportar Empleados a CSV' }}
+    <div class="reportes-header">
+      <h1>Panel de Reportería</h1> 
+      <p>Visualiza las métricas y estadísticas clave de la organización.</p> 
+      <button @click="exportarCSV" class="btn btn-export" :disabled="exportando">
+        <span v-if="exportando">Exportando...</span>
+        <span v-else>Exportar Empleados a CSV</span>
       </button>
     </div>
 
-    <!-- Contenedor de Gráficos -->
-    <div class="charts-grid">
-      <!-- Card para Total de Empleados -->
-      <div class="chart-card total-empleados-card">
-        <h3>Total de Empleados Activos</h3>
-        <div v-if="cargando.estadisticas" class="loading-spinner"></div>
-        <p v-else class="total-number">{{ totalEmpleados }}</p>
-      </div>
+    <div v-if="cargando" class="loading-container">
+      <div class="spinner"></div>
+      <p>Cargando reportes...</p>
+    </div>
 
-      <!-- Gráfico de Empleados por Puesto -->
-      <div class="chart-card">
-        <div v-if="cargando.estadisticas" class="loading-spinner"></div>
-        <EmpleadosPorPuestoChart v-else-if="estadisticasEmpleados?.empleadosPorPuesto?.length" :empleados-por-puesto="estadisticasEmpleados.empleadosPorPuesto" />
+    <div v-if="error" class="error-alert">
+      <strong>Error:</strong> {{ error }}
+    </div>
+
+    <div v-if="!cargando && !error" class="report-grid">
+      <!-- Reporte de Empleados -->
+      <div class="report-card chart-card">
+        <EmpleadosPorPuestoChart v-if="reportes.estadisticasEmpleados?.empleadosPorPuesto" :empleados-por-puesto="reportes.estadisticasEmpleados.empleadosPorPuesto" />
         <p v-else class="no-data">No hay datos de empleados por puesto.</p>
       </div>
 
-      <!-- Gráfico de Estado de Candidatos -->
-      <div class="chart-card">
-        <div v-if="cargando.candidatos" class="loading-spinner"></div>
-        <EstadoCandidatosChart v-else-if="estadoCandidatos?.length" :estado-candidatos="estadoCandidatos" />
-        <p v-else class="no-data">No hay datos de estado de candidatos.</p>
+      <!-- Reporte de Estado de Candidatos -->
+      <div class="report-card">
+        <EstadoCandidatosTable v-if="reportes.estadoCandidatos?.length" :estado-candidatos="reportes.estadoCandidatos" />
+        <p v-else class="no-data">No hay datos de candidatos.</p>
       </div>
 
-      <!-- Gráfico de Promedio de Desempeño -->
-      <div class="chart-card">
-        <div v-if="cargando.desempeno" class="loading-spinner"></div>
-        <PromedioDesempenoChart v-else-if="promedioDesempeno?.length" :promedio-desempeno="promedioDesempeno" />
-        <p v-else class="no-data">No hay datos de promedio de desempeño.</p>
+      <!-- Reporte de Desempeño -->
+      <div class="report-card chart-card">
+        <PromedioDesempenoChart v-if="reportes.promedioDesempeno?.length" :promedio-desempeno="reportes.promedioDesempeno" />
+        <p v-else class="no-data">No hay datos de desempeño.</p>
       </div>
 
-      <!-- Gráfico de Total de Sueldos -->
-      <div class="chart-card large-card">
-        <div v-if="cargando.sueldos" class="loading-spinner"></div>
-        <TotalSueldosChart v-else-if="totalSueldos?.length" :total-sueldos="totalSueldos" />
-        <p v-else class="no-data">No hay datos de total de sueldos.</p>
+      <!-- Reporte de Nómina -->
+      <div class="report-card large-card">
+        <TotalSueldosChart v-if="reportes.totalSueldos?.length" :total-sueldos="reportes.totalSueldos" />
+        <p v-else class="no-data">No hay datos de nómina.</p>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, reactive } from 'vue'; 
 import ReporteService from '../services/reportes.js';
 import EmpleadosPorPuestoChart from '../components/Reportes/EmpleadosPorPuestoChart.vue';
-import EstadoCandidatosChart from '../components/Reportes/EstadoCandidatosChart.vue';
+import EstadoCandidatosTable from '../components/Reportes/EstadoCandidatosTable.vue';
 import PromedioDesempenoChart from '../components/Reportes/PromedioDesempenoChart.vue';
 import TotalSueldosChart from '../components/Reportes/TotalSueldosChart.vue';
 
-// --- Estado Reactivo ---
-const estadisticasEmpleados = ref(null);
-const estadoCandidatos = ref(null);
-const promedioDesempeno = ref(null);
-const totalSueldos = ref(null);
-const error = ref(null);
-const exportando = ref(false);
-
-const cargando = ref({
-  estadisticas: true,
-  candidatos: true,
-  desempeno: true,
-  sueldos: true,
+const reportes = reactive({
+  estadisticasEmpleados: null,
+  estadoCandidatos: null,
+  promedioDesempeno: null,
+  totalSueldos: null,
 });
 
-// --- Datos Computados ---
-const totalEmpleados = computed(() => estadisticasEmpleados.value?.totalEmpleados || 0);
+const cargando = ref(true);
+const exportando = ref(false);
+const error = ref(null);
 
-// --- Métodos ---
-const cargarTodosLosReportes = async () => {
+const cargarReportes = async () => {
+  cargando.value = true;
   error.value = null;
-  
-  const cargarReporte = async (clave, servicio) => {
-    cargando.value[clave] = true;
-    try {
-      const response = await servicio();
-      if (response.success) {
-        return response.data;
-      } else {
-        throw new Error(response.error || `Error en reporte ${clave}`);
-      }
-    } catch (err) {
-      error.value = `Error al cargar ${clave}: ${err.message}`;
-      return null;
-    } finally {
-      cargando.value[clave] = false;
-    }
-  };
+  try {
+    const [
+      empleadosRes,
+      candidatosRes,
+      desempenoRes,
+      sueldosRes
+    ] = await Promise.allSettled([
+      ReporteService.obtenerEstadisticasEmpleados(),
+      ReporteService.obtenerEstadoCandidatos(),
+      ReporteService.obtenerPromedioDesempeno(),
+      ReporteService.obtenerTotalSueldosPorMes(),
+    ]);
 
-  estadisticasEmpleados.value = await cargarReporte('estadisticas', ReporteService.obtenerEstadisticasEmpleados);
-  estadoCandidatos.value = await cargarReporte('candidatos', ReporteService.obtenerEstadoCandidatos);
-  promedioDesempeno.value = await cargarReporte('desempeno', ReporteService.obtenerPromedioDesempeno);
-  totalSueldos.value = await cargarReporte('sueldos', ReporteService.obtenerTotalSueldosPorMes);
+    if (empleadosRes.status === 'fulfilled' && empleadosRes.value.success) reportes.estadisticasEmpleados = empleadosRes.value.data;
+    if (candidatosRes.status === 'fulfilled' && candidatosRes.value.success) reportes.estadoCandidatos = candidatosRes.value.data;
+    if (desempenoRes.status === 'fulfilled' && desempenoRes.value.success) reportes.promedioDesempeno = desempenoRes.value.data;
+    if (sueldosRes.status === 'fulfilled' && sueldosRes.value.success) reportes.totalSueldos = sueldosRes.value.data;
+
+    const failedRequest = [empleadosRes, candidatosRes, desempenoRes, sueldosRes].find(res => res.status === 'rejected');
+    if (failedRequest) {
+      throw new Error('No se pudieron cargar todos los reportes.');
+    }
+
+  } catch (err) {
+    error.value = err.message || 'Error de conexión al servidor.';
+  } finally {
+    cargando.value = false;
+  }
 };
 
 const exportarCSV = async () => {
-  error.value = null;
   exportando.value = true;
   try {
-    const data = await ReporteService.exportarEmpleadosCSV();
-    const blob = new Blob([data], { type: 'text/csv' });
-    const link = document.createElement('a');
-    link.href = window.URL.createObjectURL(blob);
-    link.download = 'reporte_empleados.csv';
-    link.click();
-    window.URL.revokeObjectURL(link.href);
+    await ReporteService.exportarEmpleadosCSV();
   } catch (err) {
-    error.value = `Error al exportar el archivo: ${err.message}`;
+    console.error("Fallo en la exportación desde el componente:", err);
   } finally {
     exportando.value = false;
   }
 };
 
-// --- Ciclo de Vida ---
-onMounted(() => {
-  cargarTodosLosReportes();
-});
+onMounted(cargarReportes);
 </script>
 
 <style scoped>
-.reportes-container {
-  padding: 2rem;
-  background-color: #f4f7f6;
-}
+.reportes-container { max-width: 1200px; margin: 0 auto; padding: 32px 16px; font-family: 'Inter', sans-serif; background-color: #f7f9fc; min-height: 100vh; }
+.reportes-header { text-align: center; margin-bottom: 24px; }
+.reportes-header h1 { font-size: 32px; font-weight: 700; color: #2c3e50; }
+.reportes-header p { font-size: 16px; color: #7f8c8d; margin-top: 8px; }
 
-.reportes-header {
-  text-align: center;
-  margin-bottom: 2rem;
-}
+.loading-container { text-align: center; padding: 50px; }
+.spinner { width: 40px; height: 40px; border: 4px solid #ecf0f1; border-top-color: #3498db; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px; }
+@keyframes spin { to { transform: rotate(360deg); } }
 
-.reportes-header h1 {
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: #333;
-}
+.report-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+.report-card { background: white; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.07); padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+.chart-card { min-height: 400px; }
+.large-card { grid-column: 1 / -1; }
 
-.reportes-header p {
-  font-size: 1.1rem;
-  color: #666;
-}
-
-.error-alert {
-  background-color: #f8d7da;
-  color: #721c24;
-  padding: 1rem;
-  border: 1px solid #f5c6cb;
-  border-radius: 8px;
-  margin-bottom: 2rem;
-}
-
-.actions-card {
-  background: white;
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  margin-bottom: 2rem;
-  text-align: center;
-}
+.no-data { color: #95a5a6; text-align: center; padding: 20px; }
+.error-alert { margin-top: 20px; padding: 15px; background-color: #e74c3c; color: white; border-radius: 8px; }
 
 .btn-export {
-  background-color: #28a745;
-  color: white;
-  padding: 0.75rem 1.5rem;
-  border: none;
+  margin-top: 16px;
+  padding: 10px 20px;
   border-radius: 8px;
-  font-size: 1rem;
   font-weight: 600;
+  border: none;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.2s;
+  background-color: #2ecc71;
+  color: white;
 }
-
-.btn-export:hover {
-  background-color: #218838;
-}
-
-.btn-export:disabled {
-  background-color: #6c757d;
-  cursor: not-allowed;
-}
-
-.charts-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 1.5rem;
-}
-
-.chart-card {
-  background: white;
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  height: 400px; /* Altura fija para consistencia */
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-.large-card {
-  grid-column: span 2; /* Ocupa dos columnas */
-}
-
-.total-empleados-card {
-  text-align: center;
-}
-
-.total-empleados-card h3 {
-  font-size: 1.5rem;
-  color: #333;
-  margin-bottom: 1rem;
-}
-
-.total-number {
-  font-size: 4rem;
-  font-weight: 700;
-  color: #667eea;
-}
-
-.loading-spinner {
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #667eea;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.no-data {
-  color: #888;
-  font-style: italic;
-}
+.btn-export:hover:not(:disabled) { background-color: #27ae60; }
+.btn-export:disabled { opacity: 0.6; cursor: not-allowed; }
 </style>

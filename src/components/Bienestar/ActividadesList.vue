@@ -16,14 +16,14 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="actividad in actividades" :key="actividad.id_actividad">
+          <tr v-for="actividad in actividades" :key="actividad.id_bienestar">
             <td>{{ actividad.id_bienestar }}</td>
             <td>{{ actividad.nombre_actividad }}</td>
             <td>{{ actividad.descripcion }}</td>
-            <td>{{ new Date(actividad.fecha).toLocaleDateString() }}</td>
+            <td>{{ formatDate(actividad.fecha_actividad) }}</td>
             <td>
               <button class="btn-editar" @click="$emit('editar', actividad)">Editar</button>
-              <button class="btn-eliminar" @click="$emit('eliminar', actividad.id_actividad)">Eliminar</button>
+              <button class="btn-eliminar" @click="$emit('eliminar', actividad.id_bienestar)">Eliminar</button>
             </td>
           </tr>
         </tbody>
@@ -36,9 +36,6 @@
 </template>
 
 <script setup>
-
-
-
 const props = defineProps({
   actividades: {
     type: Array,
@@ -51,6 +48,18 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['editar', 'eliminar']);
+
+const formatDate = (dateString) => {
+  if (!dateString) return 'N/A';
+  const date = new Date(dateString);
+  if (isNaN(date)) {
+    return 'Fecha Inválida';
+  }
+  const day = String(date.getUTCDate()).padStart(2, '0');
+  const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+  const year = date.getUTCFullYear();
+  return `${day}/${month}/${year}`;
+};
 </script>
 
 <style scoped>
