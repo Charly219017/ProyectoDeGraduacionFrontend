@@ -103,7 +103,7 @@ export const useAuthStore = defineStore('auth', () => {
         return; // Carga exitosa desde sessionStorage
       } catch (e) {
         console.error("Datos de usuario corruptos en sessionStorage, limpiando.", e);
-        sessionStorage.removeItem('usuario'); // <--- CAMBIO
+        sessionStorage.removeItem('usuario');
       }
     }
 
@@ -115,7 +115,7 @@ export const useAuthStore = defineStore('auth', () => {
       sessionStorage.setItem('usuario', JSON.stringify(respuestaUsuario.usuario)); // <--- CAMBIO
     } catch (err) {
       console.error("Fallo al obtener el perfil del usuario, cerrando sesión.", err);
-      logout(); // El token probablemente es inválido
+      logout(); 
     }
   };
 
