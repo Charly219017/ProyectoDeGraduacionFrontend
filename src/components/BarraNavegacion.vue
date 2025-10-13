@@ -12,10 +12,19 @@
           Dashboard
         </router-link>
 
-        <router-link to="/empleados" class="nav-link">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+      <div class="nav-dropdown">
+        <button class="nav-link dropdown-toggle">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
           Empleados
-        </router-link>
+          <svg class="dropdown-arrow" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
+        </button>
+        <div class="dropdown-menu">
+          <router-link to="/empleados" class="dropdown-item">Gestión de Empleados</router-link>
+          <router-link to="/reclutamiento/evaluaciones" class="dropdown-item">Evaluaciones de Desempeño</router-link>
+          <router-link to="/reclutamiento/criterios" class="dropdown-item">Criterios de Evaluación</router-link>
+          <router-link to="/reclutamiento/detalles_evaluacion" class="dropdown-item">Detalles de Evaluaciones</router-link>
+        </div>
+      </div>
 
         <div class="nav-dropdown">
           <button class="nav-link dropdown-toggle">
@@ -27,9 +36,6 @@
             <router-link to="/reclutamiento/vacantes" class="dropdown-item">Gestión de Vacantes</router-link>
             <router-link to="/reclutamiento/candidatos" class="dropdown-item">Gestión de Candidatos</router-link>
             <router-link to="/reclutamiento/aplicaciones" class="dropdown-item">Seguimiento de Aplicaciones</router-link>
-            <router-link to="/reclutamiento/evaluaciones" class="dropdown-item">Evaluaciones de Desempeño</router-link>
-            <router-link to="/reclutamiento/criterios" class="dropdown-item">Criterios de Evaluación</router-link>
-            <router-link to="/reclutamiento/detalles_evaluacion" class="dropdown-item">Detalles de Evaluaciones</router-link>
           </div>
         </div>
 
