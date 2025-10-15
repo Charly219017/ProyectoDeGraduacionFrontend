@@ -2,7 +2,7 @@
   <div class="login-container">
     <div class="login-card">
       <div class="login-header">
-        <h1>Sistema Jireh</h1>
+        <h1>Sistema Elenita</h1>
         <p>Gestión de Recursos Humanos</p>
       </div>
 

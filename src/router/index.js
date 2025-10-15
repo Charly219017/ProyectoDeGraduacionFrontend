@@ -9,6 +9,7 @@ import reclutamientoRoutes from './reclutamientoRutas.js';
 import nominaRoutes from './nominaRutas.js';
 import bienestarRoutes from './bienestarRutas.js';
 import reportesRutas from './reportesRutas.js';
+import inventarioRutas from './inventarioRutas.js';
 
 // Importa tu servicio de autenticación
 import authService from '../services/auth'
@@ -33,7 +34,7 @@ const rutasPrincipales = [
 ]
 
 // Unimos todas las rutas en un solo array
-const rutas = [...rutasPrincipales, ...rutasMantenimiento, ...empleadosRoutes, ...reclutamientoRoutes, ...nominaRoutes, ...bienestarRoutes, ...reportesRutas]
+const rutas = [...rutasPrincipales, ...rutasMantenimiento, ...empleadosRoutes, ...reclutamientoRoutes, ...nominaRoutes, ...bienestarRoutes, ...reportesRutas, ...inventarioRutas]
 
 const router = createRouter({
   history: createWebHistory(),

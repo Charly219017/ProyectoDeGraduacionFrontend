@@ -3,7 +3,7 @@
   <div class="dashboard">
     <div class="dashboard-header">
       <h1>Dashboard Principal</h1>
-      <p>Bienvenido al Sistema Jireh</p>
+      <p>Bienvenido al Sistema Elenita</p>
     </div>
 
     <div class="stats-grid">
@@ -150,6 +150,19 @@
         </button>
       </div>
 
+      <div class="module-card">
+        <div class="module-icon">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M21 6h-4.18C16.4 4.84 15.3 4 14 4h-4c-1.3 0-2.4.84-2.82 2H3v14h18V6zm-9-1.5c.28 0 .5.22.5.5s-.22.5-.5.5-.5-.22-.5-.5.22-.5.5-.5zM5 8h14v10H5V8z"/>
+          </svg>
+        </div>
+        <h3>Inventario</h3>
+        <p>Gestión de productos, categorías y stock</p>
+        <button class="module-btn" @click="navegarAModulo('inventario')">
+          Acceder
+        </button>
+      </div>
+
     </div>
   </div>
 </template>
@@ -183,7 +196,8 @@ const navegarAModulo = (modulo) => {
     evaluaciones: '/reclutamiento/evaluaciones',
     bienestar: '/bienestar',
     reportes: '/reportes',
-    mantenimientoEmpleados: '/mantenimiento/usuarios'
+    mantenimientoEmpleados: '/mantenimiento/usuarios',
+    inventario: '/inventario'
   };
 
   const ruta = rutas[modulo];

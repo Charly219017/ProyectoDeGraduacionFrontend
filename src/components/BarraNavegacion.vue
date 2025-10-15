@@ -3,7 +3,7 @@
   <nav class="navbar">
     <div class="navbar-container">
       <div class="navbar-brand">
-        <h2>Sistema Jireh</h2>
+        <h2>Sistema Elinita</h2>
       </div>
 
       <div class="navbar-menu">
@@ -67,6 +67,19 @@
             <router-link to="/mantenimiento/dependencias" class="dropdown-item">Dependencias</router-link>
             <router-link to="/mantenimiento/puestos" class="dropdown-item">Puestos</router-link>
             <router-link to="/mantenimiento/carreras" class="dropdown-item">Carreras</router-link>
+          </div>
+        </div>
+
+        <div class="nav-dropdown">
+          <button class="nav-link dropdown-toggle">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 6h-4.18C16.4 4.84 15.3 4 14 4h-4c-1.3 0-2.4.84-2.82 2H3v14h18V6zm-9-1.5c.28 0 .5.22.5.5s-.22.5-.5.5-.5-.22-.5-.5.22-.5.5-.5zM5 8h14v10H5V8z"/></svg>
+            Inventario
+            <svg class="dropdown-arrow" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
+          </button>
+          <div class="dropdown-menu">
+            <router-link to="/inventario/categorias" class="dropdown-item">Categorías</router-link>
+            <router-link to="/inventario/productos" class="dropdown-item">Productos</router-link>
+            <router-link to="/inventario/movimientos" class="dropdown-item">Movimientos</router-link>
           </div>
         </div>
 
